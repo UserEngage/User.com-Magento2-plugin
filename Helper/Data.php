@@ -6,6 +6,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     const XML_PATH      = 'usercom/';
     const XML_ENABLE    = 'usercom/general/enable';
+    const XML_TOKEN     = 'usercom/general/token';
     const XML_API       = 'usercom/general/api';
     const XML_SUBDOMAIN = 'usercom/general/subdomain';
 
@@ -37,6 +38,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->getConfigValue(self::XML_ENABLE);             
     }
 
+    public function getToken(){
+
+        return $this->getConfigValue(self::XML_TOKEN);             
+    }   
+    
     public function getApi(){
 
         return $this->getConfigValue(self::XML_API);             
