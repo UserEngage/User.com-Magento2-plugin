@@ -1,12 +1,13 @@
 <?php
-declare(strict_types=1);
-
 namespace Usercom\Analytics\Helper;
 
-use Magento\Framework\App\Helper\AbstractHelper;
-
-class Data extends AbstractHelper
+class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
+
+    const XML_PATH      = 'usercom/';
+    const XML_ENABLE    = 'usercom/general/enable';
+    const XML_API       = 'usercom/general/api';
+    const XML_SUBDOMAIN = 'usercom/general/subdomain';
 
     /**
      * @param \Magento\Framework\App\Helper\Context $context
@@ -16,5 +17,33 @@ class Data extends AbstractHelper
     ) {
         parent::__construct($context);
     }
-}
 
+    public function getConfigValue($field, $storeId = null){
+
+        return $this->scopeConfig->getValue(
+            $field, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId
+        );
+    }
+
+    public function getGeneralConfig($code, $storeId = null){
+
+        return $this->getConfigValue(
+            self::XML_PATH . $code, $storeId
+        );
+    }
+    
+    public function isModuleEnabled(){
+
+        return $this->getConfigValue(self::XML_ENABLE);             
+    }
+
+    public function getApi(){
+
+        return $this->getConfigValue(self::XML_API);             
+    }
+
+    public function getSubdomain(){
+
+        return $this->getConfigValue(self::XML_SUBDOMAIN);             
+    }
+}

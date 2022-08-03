@@ -1,6 +1,7 @@
+<?php if($block->isModuleEnabled()):?>
 <script data-cfasync="false" type="text/javascript">
   window.civchat = {
-    apiKey: 'YOUR_API_KEY',
+    apiKey: '<?= $block->getApi() ?>',
     name: "John Doe",
     user_id: "idfromyourdatabase",
     email: "myemail@example.org",
@@ -16,4 +17,5 @@
     }
   };
 </script>
-<script data-cfasync="false" type="text/javascript" src="https://<your_app_subdomain>.user.com/widget.js"></script>
+<script data-cfasync="false" type="text/javascript" src="https://<?= $block->getSubdomain() ?>.user.com/widget.js"></script>
+<?php endif ?>
