@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Septsite\UserdotcomAnalytics\Helper;
+namespace Usercom\Analytics\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
 
