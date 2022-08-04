@@ -18,6 +18,9 @@
     <event name="sales_quote_remove_item"> 
         <observer instance="Usercom\Analytics\Observer\Sales\QuoteRemoveItem" name="usercom_sales_quote_remove_item"/> 
     </event>
+    <event name="sales_order_place_after"> 
+        <observer instance="Usercom\Analytics\Observer\Sales\OrderPlaceAfter" name="usercom_sales_order_place_after"/> 
+    </event>
 </config>
 
 
