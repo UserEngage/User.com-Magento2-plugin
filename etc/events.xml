@@ -12,6 +12,9 @@
     <event name="catalog_controller_product_view"> 
         <observer instance="Usercom\Analytics\Observer\Catalog\ControllerProductView" name="usercom_catalog_controller_product_view"/> 
     </event>
+    <event name="controller_action_predispatch_checkout_index_index"> 
+        <observer instance="Usercom\Analytics\Observer\Controller\ActionPredispatchCheckoutIndexIndex" name="usercom_controller_action_predispatch_checkout_index_index"/> 
+    </event>
 </config>
 
 
