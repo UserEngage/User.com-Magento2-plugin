@@ -6,12 +6,15 @@ class RegisterSuccess implements \Magento\Framework\Event\ObserverInterface
 {
 
     protected $helper;
+    protected $usercom;
 
     public function __construct(
-        \Usercom\Analytics\Helper\Data $helper
+        \Usercom\Analytics\Helper\Data $helper,
+        \Usercom\Analytics\Helper\Usercom $usercom
     ){
-
+        
         $this->helper = $helper;
+        $this->usercom = $usercom;
     }
 
     public function execute(
@@ -22,30 +25,16 @@ class RegisterSuccess implements \Magento\Framework\Event\ObserverInterface
             return;
 
         $customer = $observer->getEvent()->getData('customer');
+        
+        $data = array(
+            "first_name" => $customer->getFirstName(),
+            "last_name" => $customer->getLastName(),
+            "email" => $customer->getEmail(),
+            "custom_id" => $customer->getId()
+        );
 
-        $curl = curl_init();
+        $response = $this->usercom->sendEvent("/users/update_or_create/", $data);
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://".$this->helper->getSubdomain().".user.com/api/public/users/update_or_create/",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => "{\n  \"custom_id\": \"".$customer->getId()."\",\n  \"first_name\": \"".$customer->getFirstname()."\",\n  \"last_name\": \"".$customer->getLastName()."\"\n}",
-            CURLOPT_HTTPHEADER => array(
-                "Accept: */*; version=2",
-                "authorization: Token ". $this->helper->getToken(),
-                "content-type: application/json"
-           ),
-        ));
-
-        $response = curl_exec($curl);
-        $err = curl_error($curl); 
-
-        curl_close($curl);
-        //log
         $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/test.log');
         $logger = new \Zend\Log\Logger();
         $logger->addWriter($writer);
