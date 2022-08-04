@@ -15,6 +15,9 @@
     <event name="controller_action_predispatch_checkout_index_index"> 
         <observer instance="Usercom\Analytics\Observer\Controller\ActionPredispatchCheckoutIndexIndex" name="usercom_controller_action_predispatch_checkout_index_index"/> 
     </event>
+    <event name="sales_quote_remove_item"> 
+        <observer instance="Usercom\Analytics\Observer\Sales\QuoteRemoveItem" name="usercom_sales_quote_remove_item"/> 
+    </event>
 </config>
 
 
