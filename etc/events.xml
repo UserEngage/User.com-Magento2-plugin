@@ -21,6 +21,9 @@
     <event name="sales_order_place_after"> 
         <observer instance="Usercom\Analytics\Observer\Sales\OrderPlaceAfter" name="usercom_sales_order_place_after"/> 
     </event>
+    <event name="controller_action_postdispatch_newsletter_manage_save"> 
+        <observer instance="Usercom\Analytics\Observer\Controller\ActionPostdispatchNewsletterManageSave" name="usercom_controller_action_postdispatch_newsletter_manage_save"/> 
+    </event>
 </config>
 
 
