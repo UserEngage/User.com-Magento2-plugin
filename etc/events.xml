@@ -9,4 +9,9 @@
     <event name="checkout_cart_add_product_complete"> 
         <observer instance="Usercom\Analytics\Observer\Checkout\CartAddProductComplete" name="usercom_checkout_cart_add_product_complete"/> 
     </event>
+    <event name="catalog_controller_product_view"> 
+        <observer instance="Usercom\Analytics\Observer\Catalog\ControllerProductView" name="usercom_catalog_controller_product_view"/> 
+    </event>
 </config>
+
+
