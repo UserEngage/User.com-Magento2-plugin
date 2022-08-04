@@ -28,5 +28,3 @@
         <observer instance="Usercom\Analytics\Observer\Sales\OrderPaymentPay" name="usercom_sales_order_payment_pay"/> 
     </event>
 </config>
-
-
