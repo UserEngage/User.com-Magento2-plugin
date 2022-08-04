@@ -1,6 +1,9 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <event name="customer_register_success">
-        <observer instance="Usercom\Analytics\Observer\Customer\RegisterSuccess" name="customer_register_succes"/>
+        <observer instance="Usercom\Analytics\Observer\Customer\RegisterSuccess" name="usercom_customer_register_succes"/>
+    </event>
+    <event name="customer_login">
+        <observer instance="Usercom\Analytics\Observer\Customer\Login" name="usercom_customer_login" />
     </event>
 </config>
