@@ -4,15 +4,18 @@ namespace Usercom\Analytics\Block;
 class Frontend extends \Magento\Framework\View\Element\Template
 {
     protected $helper;
+    protected $customerSession;
 
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
-        \Usercom\Analytics\Helper\Data $_helper
+        \Magento\Customer\Model\Session $customerSession,
+        \Usercom\Analytics\Helper\Data $helper
     ){
-        $this->helper = $_helper;
+        $this->customerSession = $customerSession;
+        $this->helper = $helper;
         parent::__construct($context);
     }
 
@@ -26,5 +29,9 @@ class Frontend extends \Magento\Framework\View\Element\Template
 
     public function getSubdomain(){
         return $this->helper->getSubdomain();
+    }
+
+    public function getCustomerId(){
+        return ($this->customerSession->isLoggedIn()) ? $this->customerSession->getCustomer()->getId() : "";
     }
 }
