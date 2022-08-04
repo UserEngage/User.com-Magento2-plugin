@@ -6,4 +6,7 @@
     <event name="customer_login">
         <observer instance="Usercom\Analytics\Observer\Customer\Login" name="usercom_customer_login" />
     </event>
+    <event name="checkout_cart_add_product_complete"> 
+        <observer instance="Usercom\Analytics\Observer\Checkout\CartAddProductComplete" name="usercom_checkout_cart_add_product_complete"/> 
+    </event>
 </config>
