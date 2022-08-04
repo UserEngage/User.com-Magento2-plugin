@@ -24,6 +24,9 @@
     <event name="controller_action_postdispatch_newsletter_manage_save"> 
         <observer instance="Usercom\Analytics\Observer\Controller\ActionPostdispatchNewsletterManageSave" name="usercom_controller_action_postdispatch_newsletter_manage_save"/> 
     </event>
+    <event name="sales_order_payment_pay"> 
+        <observer instance="Usercom\Analytics\Observer\Sales\OrderPaymentPay" name="usercom_sales_order_payment_pay"/> 
+    </event>
 </config>
 
 
