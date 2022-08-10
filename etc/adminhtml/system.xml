@@ -15,14 +15,20 @@
                     <label>Module Enable</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="token" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Token</label>
+                <field id="api" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Your app Api Key</label>
+                    <comment>Please, enter your Api Key (6 characters long).</comment>
+                    <tooltip>You can find an Api Key in the Settings > Setup &amp; Integrations section in the User.com app</tooltip>
                 </field>
-                <field id="api" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>API Key</label>
+                <field id="subdomain" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Your app subdomain</label>
+                    <comment>Please, enter your User.com domain name. For example: "your-company.user.com"</comment>
+                    <tooltip>You can find a domain name in the Settings > Setup &amp; Integrations section in the User.com app</tooltip>
                 </field>
-                <field id="subdomain" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Subdomain</label>
+                <field id="token" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Your app REST Api key</label>
+                    <comment>Please enter your app Rest Api key, created under https://your-company.user.com/api/credentials/</comment>
+                    <tooltip>Can be created under Settings > Advanced > Public REST API keys in your User.com app panel</tooltip>
                 </field>
             </group>
         </section>    
