@@ -19,7 +19,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://".$this->helper->getSubdomain().".user.com/api/public/".$url,
+            CURLOPT_URL => "https://".$this->helper->getSubdomain()."/api/public/".$url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -47,7 +47,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://'.$this->helper->getSubdomain().'.user.com/api/public/users/'.$id.'/',
+            CURLOPT_URL => 'https://'.$this->helper->getSubdomain().'/api/public/users/'.$id.'/',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -73,7 +73,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://'.$this->helper->getSubdomain().'.user.com/api/public/users-by-id/'.$custom_id.'/',
+            CURLOPT_URL => 'https://'.$this->helper->getSubdomain().'/api/public/users-by-id/'.$custom_id.'/',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
