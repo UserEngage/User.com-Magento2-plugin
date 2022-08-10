@@ -6,25 +6,32 @@ class ControllerProductView implements \Magento\Framework\Event\ObserverInterfac
 {
 
     protected $helper;
+    protected $usercom;
 
     public function __construct(
-        \Usercom\Analytics\Helper\Data $helper
+        \Usercom\Analytics\Helper\Data $helper,
+        \Usercom\Analytics\Helper\Usercom $usercom
     ){
-
         $this->helper = $helper;
+        $this->usercom = $usercom;
     }
 
     public function execute(
         \Magento\Framework\Event\Observer $observer
     ) {
+    
+        $productId = $observer->getEvent()->getProduct()->getId();
 
-        if(!$this->helper->isModuleEnabled())
+        if( !$this->helper->isModuleEnabled() || !($usercomCustomerId = $this->usercom->getUsercomCustomerId()) || !($usercomProductId = $this->usercom->getUsercomProductId($productId)) )
             return;
 
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/test.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info("product view");
+         $this->usercom->createProductEvent($usercomProductId,array(
+                "id" => $usercomProductId,
+                "user_id" => $usercomCustomerId,
+                "data" => $this->usercom->getProductData($productId),
+                "event_type" => "view",
+                "timestamp" => time()
+            ));
 
     }
 }

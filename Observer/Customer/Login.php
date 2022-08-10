@@ -35,12 +35,6 @@ class Login implements \Magento\Framework\Event\ObserverInterface
             )
         );
 
-        $response = $this->usercom->sendEvent("events/",$data);
-
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/test.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info("login: ".$response);
-
+        $response = $this->usercom->sendPostEvent("events/",$data);
     }
 }
