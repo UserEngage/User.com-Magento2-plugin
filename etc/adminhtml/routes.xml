@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="admin">
+        <route id="usercom_analytics" frontName="usercom_analytics">
+            <module name="Usercom_Analytics" before="Magento_Backend"/>
+        </route>
+    </router>
+</config>

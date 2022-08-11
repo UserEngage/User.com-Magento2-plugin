@@ -12,8 +12,8 @@
     <event name="catalog_controller_product_view"> 
         <observer instance="Usercom\Analytics\Observer\Catalog\ControllerProductView" name="usercom_catalog_controller_product_view"/> 
     </event>
-    <event name="controller_action_predispatch_checkout_index_index"> 
-        <observer instance="Usercom\Analytics\Observer\Controller\ActionPredispatchCheckoutIndexIndex" name="usercom_controller_action_predispatch_checkout_index_index"/> 
+    <event name="controller_action_postdispatch_checkout_index_index"> 
+        <observer instance="Usercom\Analytics\Observer\Controller\ActionPostdispatchCheckoutIndexIndex" name="usercom_controller_action_postdispatch_checkout_index_index"/> 
     </event>
     <event name="sales_quote_remove_item"> 
         <observer instance="Usercom\Analytics\Observer\Sales\QuoteRemoveItem" name="usercom_sales_quote_remove_item"/> 
@@ -21,8 +21,8 @@
     <event name="sales_order_place_after"> 
         <observer instance="Usercom\Analytics\Observer\Sales\OrderPlaceAfter" name="usercom_sales_order_place_after"/> 
     </event>
-    <event name="controller_action_postdispatch_newsletter_manage_save"> 
-        <observer instance="Usercom\Analytics\Observer\Controller\ActionPostdispatchNewsletterManageSave" name="usercom_controller_action_postdispatch_newsletter_manage_save"/> 
+    <event name="newsletter_subscriber_save_after"> 
+        <observer instance="Usercom\Analytics\Observer\Newsletter\SubscriberSaveAfter" name="usercom_newsletter_subscriber_save_after"/> 
     </event>
     <event name="sales_order_payment_pay"> 
         <observer instance="Usercom\Analytics\Observer\Sales\OrderPaymentPay" name="usercom_sales_order_payment_pay"/> 
