@@ -55,7 +55,41 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         $logger->addWriter($writer);
         $logger->info($url." - ".(($err) ?: $response));
 
-        return ($err) ? null : $response;
+        return ($err) ? null : json_decode($response);
+    }    
+
+
+    public function sendPutEvent($url,$data){
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://".$this->helper->getSubdomain()."/api/public/".$url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "PUT",
+            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_HTTPHEADER => array(
+                "Accept: */*; version=2",
+                "authorization: Token ".$this->helper->getToken(),
+                "content-type: application/json"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/Usercom.log');
+        $logger = new \Zend\Log\Logger();
+        $logger->addWriter($writer);
+        $logger->info($url." - ".(($err) ?: $response));
+
+        return ($err) ? null : json_decode($response);
     }    
 
 
@@ -134,10 +168,20 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     public function getFrontUserKey(){
-        
-       return $this->cookieManager->getCookie(self::COOKIE_USERKEY);
+
+        return $this->cookieManager->getCookie(self::COOKIE_USERKEY);
     }
-    
+
+    public function createEvent($data){
+
+        return $this->sendPostEvent("events/", $data);
+    }
+
+    public function updateCustomer($id,$data){
+
+        return $this->sendPutEvent("users/$id/",$data);
+    }
+
     public function getUsercomCustomerId($customerId = null){
 
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
@@ -156,7 +200,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
             else {
                 $data = $this->getCustomerData($customerId);
                 //if customer created return customer id
-                return ( ($usercomCustomer = $this->usercom->createCustomer($data)) && isset($usercomCustomer->id) ) ? $usercomCustomer->id : false;
+                return ( ($usercomCustomer = $this->createCustomer($data)) && isset($usercomCustomer->id) ) ? $usercomCustomer->id : false;
             }
         } else 
             //else return customer by user key if exist
@@ -171,7 +215,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         if(($usercomProduct = $this->getProductByCustomId($productId)) && isset($usercomProduct->id))
             return $usercomProduct->id;
         else {         
-            $productData = $this->getProductData($productId);  
+            $productData = $this->getProductData($productId); 
             return ( ($usercomProduct = $this->createProduct($productData)) && isset($usercomProduct->id) ) ? $usercomProduct->id : false;
         }
     }
@@ -182,8 +226,8 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         $customerSession = $objectManager->get('Magento\Customer\Model\Session');
 
         //if not customerId but login
-        if($customer_id == null && $customerSession->isLoggedIn()) {
-            $customerId = $customer->getId();
+        if($customerId == null && $customerSession->isLoggedIn()) {
+            $customerId = $customerSession->getCustomer()->getId();
         }
 
         if(!$customerId)
@@ -192,10 +236,10 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         $customer = $objectManager->create('Magento\Customer\Model\Customer')->load($customerId);
 
         return array(
+            "custom_id" => $customerId,
             "first_name" => $customer->getFirstName(),
             "last_name" => $customer->getLastName(),
             "email" => $customer->getEmail(),
-            "custom_id" => $customerId
         );
     }
 
@@ -217,7 +261,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         return array(
             "custom_id" => $productId,
             "name" => $product->getName(),
-            "price" => $product->getPrice(),
+            "price" => (float)$product->getPrice(),
             "category" => $categoryName, 
             "product_url" => $objectManager->create('Magento\Catalog\Model\Product')->load($productId)->getProductUrl(),
             "image_url" => $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'catalog/product' . $this->productRepositoryFactory->create()->getById($productId)->getData('image')
