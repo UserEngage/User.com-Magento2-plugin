@@ -21,13 +21,14 @@ class Login implements \Magento\Framework\Event\ObserverInterface
         \Magento\Framework\Event\Observer $observer
     ) {
 
-        if(!$this->helper->isModuleEnabled())
+        $customer = $observer->getEvent()->getData('customer');
+        
+        if( !$this->helper->isModuleEnabled() || !($usercomCustomerId = $this->usercom->getUsercomCustomerId($customer->getId())) )
             return;
 
-        $customer = $observer->getEvent()->getData('customer');
 
         $data = array(
-            "user_id" => $this->usercom->getCustomerByCustomId($customer->getId())->id,
+            "user_id" => $usercomCustomerId,
             "name" => "login",
             "timestamp" => time(),
             "data" => array(
@@ -35,6 +36,6 @@ class Login implements \Magento\Framework\Event\ObserverInterface
             )
         );
 
-        $response = $this->usercom->sendPostEvent("events/",$data);
+        $this->usercom->createEvent($data);
     }
 }

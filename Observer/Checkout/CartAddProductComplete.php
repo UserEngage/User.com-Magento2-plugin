@@ -21,25 +21,18 @@ class CartAddProductComplete implements \Magento\Framework\Event\ObserverInterfa
         \Magento\Framework\Event\Observer $observer
     ) {
 
-        if(!$this->helper->isModuleEnabled())
+        $productId = $observer->getEvent()->getProduct()->getId();
+
+        if( !$this->helper->isModuleEnabled() || !($usercomCustomerId = $this->usercom->getUsercomCustomerId()) || !($usercomProductId = $this->usercom->getUsercomProductId($productId)) )
             return;
 
-        $data = array(
-            "name"=>"add_to_cart", 
-            "user_id"=>"1", 
-            "timestamp"=> time(),
-            "data" => array(
-                "sku" => 1
-            )
-        );
-
-        $ret = $this->usercom->sendEvent("events/",$data);
-
-
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/test.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info("add to cart: ".$ret);
-
+        $this->usercom->createProductEvent($usercomProductId,array(
+            "id" => $usercomProductId,
+            "user_custom_id" => $this->usercom->getCustomerData()["custom_id"],
+            "user_id" => $usercomCustomerId,
+            "data" => $this->usercom->getProductData($productId),
+            "event_type" => "add to cart",
+            "timestamp" => time()
+        ));
     }
 }

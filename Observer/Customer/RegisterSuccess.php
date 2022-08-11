@@ -21,21 +21,20 @@ class RegisterSuccess implements \Magento\Framework\Event\ObserverInterface
         \Magento\Framework\Event\Observer $observer
     ) {
 
-        if(!$this->helper->isModuleEnabled())
+        $customerId = $observer->getEvent()->getData('customer')->getId();
+        
+        if( !$this->helper->isModuleEnabled() || !($usercomCustomerId = $this->usercom->getUsercomCustomerId($customerId)) )
             return;
 
-        $customer = $observer->getEvent()->getData('customer');
-        if(($usercomCustomerId = $this->usercom->getCustomerByCustomId($customer->getId())) && isset($usercomCustomerId->id)){
-            return;
-        } else {
-            $data = array(
-                "first_name" => $customer->getFirstName(),
-                "last_name" => $customer->getLastName(),
-                "email" => $customer->getEmail(),
-                "custom_id" => $customer->getId()
-            );
 
-            $this->usercom->createCustomer($data);
+        $data = array(
+            "user_id" => $usercomCustomerId,
+            "name" => "registration",
+            "timestamp" => time(),
+            "data" => $this->usercom->getCustomerData($customerId)
+        );
+
+        $this->usercom->createEvent($data);
+
         }
-    }
 }

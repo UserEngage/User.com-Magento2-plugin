@@ -6,26 +6,31 @@ class QuoteRemoveItem implements \Magento\Framework\Event\ObserverInterface
 {
 
     protected $helper;
-    protected $request;
+    protected $usercom;
 
     public function __construct(
-        \Magento\Framework\App\RequestInterface $request,
+        \Usercom\Analytics\Helper\Usercom $usercom,
         \Usercom\Analytics\Helper\Data $helper
     ){
-        $this->request = $request;
+        $this->usercom = $usercom;
         $this->helper = $helper;
     }
 
     public function execute(
         \Magento\Framework\Event\Observer $observer
     ) {
-
-        if(!$this->helper->isModuleEnabled())
+        $productId = $observer->getQuoteItem()->getProduct()->getId();
+        
+        if( !$this->helper->isModuleEnabled() || !($usercomCustomerId = $this->usercom->getUsercomCustomerId()) || !($usercomProductId = $this->usercom->getUsercomProductId($productId)) )
             return;
 
-            $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/test.log');
-            $logger = new \Zend\Log\Logger();
-            $logger->addWriter($writer);
-            $logger->info("remove");
+        $this->usercom->createProductEvent($usercomProductId,array(
+            "id" => $usercomProductId,
+            "user_custom_id" => $this->usercom->getCustomerData()["custom_id"],
+            "user_id" => $usercomCustomerId,
+            "data" => $this->usercom->getProductData($productId),
+            "event_type" => "remove",
+            "timestamp" => time()
+        ));
     }
 }
