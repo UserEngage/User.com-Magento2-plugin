@@ -3,23 +3,23 @@
 namespace Usercom\Analytics\Controller\Adminhtml\System\Config;
 
 
-class SyncCustomer extends \Magento\Backend\App\Action{
+class SyncOrder extends \Magento\Backend\App\Action{
 
     protected $resultJsonFactory;
     protected $syncTimeArray;
-    protected $customerFactory;
+    protected $orderCollectionFactory;
     protected $usercom;
 
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Usercom\Analytics\Block\System\Config\SyncTime $syncTime,
-        \Magento\Customer\Model\CustomerFactory $customerFactory,
+        \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $orderCollectionFactory,
         \Usercom\Analytics\Helper\Usercom $usercom
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->syncTimeArray = $syncTime->toOptionArray();
-        $this->customerFactory = $customerFactory;
+        $this->orderCollectionFactory = $orderCollectionFactory;
         $this->usercom = $usercom;
         parent::__construct($context);
     }
@@ -40,17 +40,30 @@ class SyncCustomer extends \Magento\Backend\App\Action{
         $from = strtotime($this->syncTimeArray[$key]["time"],strtotime($to));
         $from = date('Y-m-d h:i:s', $from);
 
-        $customers = $this->customerFactory->create()
-                                            ->getCollection()
+        $orders = $this->orderCollectionFactory->create()
                                             ->addAttributeToFilter('created_at', array('from' => $from))
                                             ->load();
 
-
         $errorMessage = "";
 
-        foreach($customers as $customer){
-            if(!($usercomCustomerId = $this->usercom->getUsercomCustomerId($customer->getId())) ){
-                $errorMessage .= "Can't create customer by id: ".$customer->getId();
+        foreach($orders as $order){
+            $customerId = $order->getCustomerId();
+            if(!($usercomCustomerId = $this->usercom->getUsercomCustomerId($customerId))){
+                $errorMessage .= "Can't create user from order by id: ". $order->getId()."<br>";
+                continue;
+            }
+
+
+            $data = array(
+                "user_id" => $usercomCustomerId,
+                "name" => "order",
+                "timestamp" => time(),
+                "data" => array(
+                    "synchronization" => "magento2"
+                )
+            );
+            if(!isset($this->usercom->createEvent($data)->created) ){
+                $errorMessage .= "Can't create order by id: ".$order->getId()."<br>";
             }
         }
 

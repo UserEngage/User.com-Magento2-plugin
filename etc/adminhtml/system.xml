@@ -39,7 +39,21 @@
                 </field>
                 <field id="customersSyncButton" translate="label comment" type="button" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                     <frontend_model>Usercom\Analytics\Block\System\Config\CustomersSyncButton</frontend_model>
-                </field>            
+                </field>     
+                <field id="ordersSyncTime" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Time</label>        
+                    <source_model>Usercom\Analytics\Block\System\Config\SyncTime</source_model>
+                </field>
+                <field id="ordersSyncButton" translate="label comment" type="button" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <frontend_model>Usercom\Analytics\Block\System\Config\OrdersSyncButton</frontend_model>
+                </field>        
+                <field id="productsPurchaseSyncTime" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Time</label>        
+                    <source_model>Usercom\Analytics\Block\System\Config\SyncTime</source_model>
+                </field>
+                <field id="productsPurchaseSyncButton" translate="label comment" type="button" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <frontend_model>Usercom\Analytics\Block\System\Config\ProductsPurchaseSyncButton</frontend_model>
+                </field> 
             </group>
         </section>    
     </system>

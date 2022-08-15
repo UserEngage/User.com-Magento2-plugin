@@ -2,11 +2,11 @@
 namespace Usercom\Analytics\Block\System\Config;
 
 
-class CustomersSyncButton extends \Magento\Config\Block\System\Config\Form\Field
+class ProductsPurchaseSyncButton extends \Magento\Config\Block\System\Config\Form\Field
 {
 
-    const BUTTON_ID = "syncCustomers";
-    const TIME_ID   = "usercom_sync_customersSyncTime";
+    const BUTTON_ID = "syncProductsPurchase";
+    const TIME_ID   = "usercom_sync_productsPurchaseSyncTime";
 
     protected $_template = 'Usercom_Analytics::system/config/syncButton.phtml';
 
@@ -47,7 +47,7 @@ class CustomersSyncButton extends \Magento\Config\Block\System\Config\Form\Field
 
     public function getAjaxUrl(){
 
-        return $this->getUrl('usercom_analytics/system_config/synccustomer');
+        return $this->getUrl('usercom_analytics/system_config/syncproductspurchase');
     }
 
     public function getButtonId(){
@@ -55,11 +55,11 @@ class CustomersSyncButton extends \Magento\Config\Block\System\Config\Form\Field
         return self::BUTTON_ID;
     }
     
+
     public function getTimeId(){
 
         return self::TIME_ID;
     }
-
     public function getButtonHtml(){
 
         $button = $this->getLayout()->createBlock(
@@ -67,7 +67,7 @@ class CustomersSyncButton extends \Magento\Config\Block\System\Config\Form\Field
         )->setData(
             [
                 'id' => self::BUTTON_ID,
-                'label' => __('Synchronize Customers'),
+                'label' => __('Synchronize Products Purchase'),
             ]
         );
 
