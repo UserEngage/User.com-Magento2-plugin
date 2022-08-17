@@ -9,19 +9,22 @@ class OrderPaymentPay implements \Magento\Framework\Event\ObserverInterface
     protected $usercom;
     protected $productRepositoryFactory;
     protected $customerRepositoryInterface;
+    protected $productRepository;
 
     public function __construct(
         \Usercom\Analytics\Helper\Data $helper,
         \Usercom\Analytics\Helper\Usercom $usercom,
         \Magento\Catalog\Api\ProductRepositoryInterfaceFactory $productRepositoryFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepositoryInterface
+        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepositoryInterface,
+        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository
     ){
         $this->helper = $helper;
         $this->usercom = $usercom;
         $this->productRepositoryFactory = $productRepositoryFactory;
         $this->storeManager =  $storeManager;
         $this->customerRepositoryInterface = $customerRepositoryInterface;
+        $this->productRepository = $productRepository;
     }
 
     public function execute(
@@ -41,9 +44,12 @@ class OrderPaymentPay implements \Magento\Framework\Event\ObserverInterface
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $products = array();
 
-        foreach($order->getAllVisibleItems() as $product){
+        foreach($order->getAllItems() as $product){
 
             $productId = $product->getProductId();
+
+            if($this->productRepository->getById($productId)->getTypeId() == \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE)
+                continue;
 
             if(!($usercomProductId = $this->usercom->getUsercomProductId($productId)))
                 continue;
@@ -59,7 +65,7 @@ class OrderPaymentPay implements \Magento\Framework\Event\ObserverInterface
                 "timestamp" => time()
             ));
 
-            $products[] = array_merge($productData, array(
+            $products[$productId] = array_merge($productData, array(
                 "brand" => $product->getAttributeText('manufacturer'),
                 "quantity" => (int)$product->getQtyOrdered(),
             ));
@@ -71,7 +77,7 @@ class OrderPaymentPay implements \Magento\Framework\Event\ObserverInterface
             "name" => "purchase",
             "timestamp" => time(),
             "data" => array(
-                "order_number" => $order->getId(),
+                "order_number" => $order->getIncrementId(),
                 "revenue" => (float)$order->getGrandTotal(),
                 "tax" => (float)$order->getTaxAmount(),
                 "shipping" => (float)$order->getShippingAmount(),

@@ -19,7 +19,11 @@ class QuoteRemoveItem implements \Magento\Framework\Event\ObserverInterface
     public function execute(
         \Magento\Framework\Event\Observer $observer
     ) {
+        
         $productId = $observer->getQuoteItem()->getProduct()->getId();
+        if ($option = $observer->getQuoteItem()->getOptionByCode('simple_product')) {
+            $productId = $option->getProduct()->getId();
+        }
         
         if( !$this->helper->isModuleEnabled() || !($usercomCustomerId = $this->usercom->getUsercomCustomerId()) || !($usercomProductId = $this->usercom->getUsercomProductId($productId)) )
             return;

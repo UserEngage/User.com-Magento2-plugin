@@ -8,16 +8,18 @@ class ActionPostdispatchCheckoutIndexIndex implements \Magento\Framework\Event\O
     protected $helper;
     protected $usercom;
     protected $cart;
+    protected $productRepository;
 
     public function __construct(
         \Usercom\Analytics\Helper\Data $helper,
         \Usercom\Analytics\Helper\Usercom $usercom,
-        \Magento\Checkout\Model\Cart $cart
+        \Magento\Checkout\Model\Cart $cart,
+        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository   
     ){
-
         $this->helper = $helper;
         $this->usercom = $usercom;
         $this->cart = $cart;
+        $this->productRepository = $productRepository;
     }
 
     public function execute(
@@ -27,11 +29,16 @@ class ActionPostdispatchCheckoutIndexIndex implements \Magento\Framework\Event\O
         if( !$this->helper->isModuleEnabled() || !($usercomCustomerId = $this->usercom->getUsercomCustomerId()) )
             return;
 
-        $products = $this->cart->getQuote()->getAllVisibleItems();
+        $products = $this->cart->getQuote()->getAllItems();
         $userCustomId = $this->usercom->getCustomerData()["custom_id"];
 
         foreach ($products as $product) {
+
             $productId = $product->getProductId();
+
+            if($this->productRepository->getById($productId)->getTypeId() == \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE)
+                continue;
+
             if(!($usercomProductId = $this->usercom->getUsercomProductId($productId)) )
                 continue;
 

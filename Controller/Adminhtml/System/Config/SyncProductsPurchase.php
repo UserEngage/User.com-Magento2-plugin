@@ -53,7 +53,10 @@ class SyncProductsPurchase extends \Magento\Backend\App\Action{
                 continue;
             }
 
-            foreach($order->getAllVisibleItems() as $product){
+            foreach($order->getAllItems() as $product){
+
+                if($product->getTypeId() == \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE)
+                    continue;
 
                 $productId = $product->getProductId();
 

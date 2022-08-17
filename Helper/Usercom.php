@@ -258,14 +258,25 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         }
         $categoryName = rtrim($categoryName, ", ");
 
-        return array(
+        $data =  array(
             "custom_id" => $productId,
             "name" => $product->getName(),
-            "price" => (float)$product->getPrice(),
+            "price" => (float)$product->getFinalPrice(),
             "category" => $categoryName, 
             "product_url" => $objectManager->create('Magento\Catalog\Model\Product')->load($productId)->getProductUrl(),
             "image_url" => $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'catalog/product' . $this->productRepositoryFactory->create()->getById($productId)->getData('image')
         );
+        
+        $attributes = $product->getAttributes();
+        foreach($attributes as $a){
+            $value = $product->getData($a->getName());
+            if($value != null){
+                $value = ( gettype($value) == "object" || gettype($value) == "array" ) ? json_encode($value) : strval($value); 
+                $data[$a->getName()] = $value;
+            }
+        }
+
+        return $data;
     }
 
 }
