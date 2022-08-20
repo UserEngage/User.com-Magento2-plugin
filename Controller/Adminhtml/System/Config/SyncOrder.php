@@ -57,7 +57,7 @@ class SyncOrder extends \Magento\Backend\App\Action{
             $data = array(
                 "user_id" => $usercomCustomerId,
                 "name" => "order",
-                "timestamp" => time(),
+                "timestamp" => strtotime($order->getData("created_at")),
                 "data" => array(
                     "synchronization" => "magento2"
                 )

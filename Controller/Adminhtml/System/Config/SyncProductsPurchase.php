@@ -73,7 +73,7 @@ class SyncProductsPurchase extends \Magento\Backend\App\Action{
                     "user_id" => $usercomCustomerId,
                     "data" => $productData,
                     "event_type" => "purchase",
-                    "timestamp" => time()
+                    "timestamp" => strtotime($order->getData("created_at"))
                 );
 
                 if(!isset($this->usercom->createProductEvent($usercomProductId,$data)->id) ){
