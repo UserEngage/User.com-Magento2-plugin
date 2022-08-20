@@ -65,10 +65,16 @@ class OrderPaymentPay implements \Magento\Framework\Event\ObserverInterface
                 "timestamp" => time()
             ));
 
-            $products[$productId] = array_merge($productData, array(
+            $products[$productId] = array(
+                "custom_id" => $productData["custom_id"],
+                "name" => $productData["name"],
+                "price" => $productData["price"],
+                "category_name" => $productData["category_name"], 
+                "product_url" => $productData["product_url"],
+                "image_url" => $productData["image_url"],
                 "brand" => $product->getAttributeText('manufacturer'),
                 "quantity" => (int)$product->getQtyOrdered(),
-            ));
+            );
 
         }
 
