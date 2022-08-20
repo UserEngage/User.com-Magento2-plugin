@@ -10,18 +10,22 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
     protected $cookieManager;
     protected $storeManager;
     protected $productRepositoryFactory;
+    protected $subscriber;
+
 
     public function __construct(
         \Usercom\Analytics\Helper\Data $helper,
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
         \Magento\Store\Model\StoreManagerInterface $storeManager, 
         \Magento\Catalog\Api\ProductRepositoryInterfaceFactory $productRepositoryFactory,
+        \Magento\Newsletter\Model\Subscriber $subscriber,
         \Magento\Framework\App\Helper\Context $context
     ) {
         $this->helper = $helper;
         $this->cookieManager = $cookieManager;
         $this->storeManager = $storeManager;
         $this->productRepositoryFactory = $productRepositoryFactory;
+        $this->subscriber= $subscriber;
         parent::__construct($context);
     }
 
@@ -149,7 +153,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getProductByCustomId($custom_id){
 
-        return $this->sendGEtEvent("products-by-id/$custom_id/details/");
+        return $this->sendGetEvent("products-by-id/$custom_id/details/");
     }
 
     public function createProduct($data){
@@ -173,6 +177,10 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     public function createEvent($data){
+
+        if($this->helper->sendStoreSource())
+            $data["data"]["store_source"] = $this->storeManager->getStore()->getId();
+            
 
         return $this->sendPostEvent("events/", $data);
     }
@@ -240,6 +248,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
             "first_name" => $customer->getFirstName(),
             "last_name" => $customer->getLastName(),
             "email" => $customer->getEmail(),
+            "unsubscribed" => !$this->subscriber->loadByCustomerId($customerId)->isSubscribed()
         );
     }
 
@@ -262,7 +271,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
             "custom_id" => $productId,
             "name" => $product->getName(),
             "price" => (float)$product->getFinalPrice(),
-            "category" => $categoryName, 
+            "category_name" => $categoryName, 
             "product_url" => $objectManager->create('Magento\Catalog\Model\Product')->load($productId)->getProductUrl(),
             "image_url" => $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'catalog/product' . $this->productRepositoryFactory->create()->getById($productId)->getData('image')
         );
