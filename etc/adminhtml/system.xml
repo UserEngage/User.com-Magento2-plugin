@@ -30,6 +30,10 @@
                     <comment>Please enter your app Rest Api key, created under https://your-company.user.com/api/credentials/</comment>
                     <tooltip>Can be created under Settings > Advanced > Public REST API keys in your User.com app panel</tooltip>
                 </field>
+                <field id="sendStoreSource" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Send Store Source</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
             </group>
             <group id="sync" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Synchronization</label>
@@ -39,6 +43,8 @@
                 </field>
                 <field id="customersSyncButton" translate="label comment" type="button" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                     <frontend_model>Usercom\Analytics\Block\System\Config\CustomersSyncButton</frontend_model>
+                    <comment>Directly synchronize all of your customers data to User.com app</comment>
+                    <tooltip>It creates users visible in your User.com app inside People section. Users have to be created before order/purchase product events synchronization.</tooltip>
                 </field>     
                 <field id="ordersSyncTime" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Time</label>        
@@ -46,6 +52,7 @@
                 </field>
                 <field id="ordersSyncButton" translate="label comment" type="button" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <frontend_model>Usercom\Analytics\Block\System\Config\OrdersSyncButton</frontend_model>
+                    <comment>Directly synchronize all of your customers' orders to User.com app as product events type Order</comment>
                 </field>        
                 <field id="productsPurchaseSyncTime" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Time</label>        
@@ -53,6 +60,7 @@
                 </field>
                 <field id="productsPurchaseSyncButton" translate="label comment" type="button" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
                     <frontend_model>Usercom\Analytics\Block\System\Config\ProductsPurchaseSyncButton</frontend_model>
+                    <comment>Directly synchronize all of your customers' purchases to User.com app as product events type Purchase</comment>
                 </field> 
             </group>
         </section>    
