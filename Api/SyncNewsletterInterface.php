@@ -6,9 +6,9 @@ interface SyncNewsletterInterface {
 
 
 	/**
-	 * @param string $data
+	 * @param mixed $user
 	 * @return string
 	 */
 	
-	public function sync($data);
+	public function sync($user);
 }
