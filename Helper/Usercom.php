@@ -179,7 +179,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
     public function createEvent($data){
 
         if($this->helper->sendStoreSource())
-            $data["data"]["store_source"] = $this->storeManager->getStore()->getId();
+            $data["data"]["store_source"] = $this->storeManager->getStore()->getCode();
             
 
         return $this->sendPostEvent("events/", $data);
