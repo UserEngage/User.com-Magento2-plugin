@@ -1,17 +1,20 @@
-<?php 
+<?php
 namespace Usercom\Analytics\Model;
 
-
-class SyncNewsletter {
-
-    protected $subscriberFactory;
+class SyncNewsletter
+{
+    protected $customerRepository;
+    protected $subscriber;
     protected $helper;
 
     public function __construct(
-        \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
+        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
+        \Magento\Newsletter\Model\Subscriber $subscriber,
         \Usercom\Analytics\Helper\Data $helper
     ) {
-        $this->subscriberFactory= $subscriberFactory;
+        $this->customerRepository = $customerRepository;
+        $this->helper = $helper;
+        $this->subscriber = $subscriber;
     }
 
 
@@ -20,18 +23,12 @@ class SyncNewsletter {
      */
     public function sync($user)
     {
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/Usercom.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info(print_r($user,true));
-/*
+        $customerId = $this->customerRepository->get($user['email'],1)->getId();
 
-        if(!$this->helper->isModuleEnabled()
-            return;
-        if(!$user["unsubscribed"])
-            $this->subscriberFactory->create()->subscribe($user["email"]);
-        else
-            $this->subscribeFactory->loadByEmail($user["email"])->unsubscribe();
- */
+        if ($user["emails_enabled"]) {
+            $this->subscriber->subscribeCustomerById($customerId)->save();        
+        } else {
+            $this->subscriber->unsubscribeCustomerById($customerId)->save();  
+        }
     }
 }
