@@ -6,10 +6,4 @@
 			<resource ref="anonymous"/>
 		</resources>
     </route>
-    <route method="POST" url="/V1/usercom-analytics/order/step2">
-		<service class="Usercom\Analytics\Api\OrderStep2Interface" method="order"/>
-		<resources>
-			<resource ref="anonymous"/>
-		</resources>
-	</route>
 </routes>
