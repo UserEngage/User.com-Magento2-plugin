@@ -12,7 +12,6 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
     protected $productRepositoryFactory;
     protected $subscriber;
 
-
     public function __construct(
         \Usercom\Analytics\Helper\Data $helper,
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
@@ -137,7 +136,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getCustomerByCustomId($custom_id){
 
-        return $this->sendGetEvent('users-by-id/'.$custom_id.'/'); 
+        return $this->sendGetEvent('users-by-id/'.base64_encode($custom_id).'/'); 
     }
 
 
@@ -151,6 +150,15 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->sendPostEvent("users/", $data);
     }
 
+    public function updateOrCreateCustomer($data){
+
+        return $this->sendPostEvent("users/update_or_create/", $data);
+    }
+
+    public function updateCustomer($id,$data){
+
+        return $this->sendPutEvent("users/$id/", $data);
+    }
     public function getProductByCustomId($custom_id){
 
         return $this->sendGetEvent("products-by-id/$custom_id/details/");
@@ -178,16 +186,10 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function createEvent($data){
 
-        if($this->helper->sendStoreSource())
-            $data["data"]["store_source"] = $this->storeManager->getStore()->getCode();
-            
+        if($this->helper->sendStoreSource()) 
+          $data["data"]["store_source"] =(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]/";
 
         return $this->sendPostEvent("events/", $data);
-    }
-
-    public function updateCustomer($id,$data){
-
-        return $this->sendPutEvent("users/$id/",$data);
     }
 
     public function getUsercomCustomerId($customerId = null){
@@ -200,19 +202,17 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
             $customerId = $customerSession->getCustomer()->getId();
         }
 
-        if($customerSession->isLoggedIn() || $customerId){
-            //if customer exist in user.com 
-            if( ($usercomCustomer = $this->getCustomerByCustomId($customerId)) && isset($usercomCustomer->id) )
-                return $usercomCustomer->id;
-            //else create customer
-            else {
-                $data = $this->getCustomerData($customerId);
-                //if customer created return customer id
-                return ( ($usercomCustomer = $this->createCustomer($data)) && isset($usercomCustomer->id) ) ? $usercomCustomer->id : false;
-            }
-        } else 
-            //else return customer by user key if exist
-            return ( ($usercomCustomer = $this->findCustomerByUserKey($this->getFrontUserKey())) && isset($usercomCustomer->id) ) ? $usercomCustomer->id : false;
+        //if customer exist in user.com 
+        if( ($customerId && ($usercomCustomer = $this->getCustomerByCustomId($customerId)) && isset($usercomCustomer->id)) || 
+            ($usercomCustomer = $this->findCustomerByUserKey($this->getFrontUserKey())) && isset($usercomCustomer->id)  )
+            return $usercomCustomer->id;
+
+        //else create customer
+        else {
+            $data = $this->getCustomerData($customerId);
+            //if customer created return customer id
+            return ( ($usercomCustomer = $this->createCustomer($data)) && isset($usercomCustomer->id) ) ? $usercomCustomer->id : false;
+        }
     }
 
     public function getUsercomProductId ($productId = null) {
@@ -244,7 +244,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         $customer = $objectManager->create('Magento\Customer\Model\Customer')->load($customerId);
 
         return array(
-            "custom_id" => $customerId,
+            "custom_id" => base64_encode($customerId),
             "first_name" => $customer->getFirstName(),
             "last_name" => $customer->getLastName(),
             "email" => $customer->getEmail(),

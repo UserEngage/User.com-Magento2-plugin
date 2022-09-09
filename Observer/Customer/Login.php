@@ -26,6 +26,7 @@ class Login implements \Magento\Framework\Event\ObserverInterface
         if( !$this->helper->isModuleEnabled() || !($usercomCustomerId = $this->usercom->getUsercomCustomerId($customer->getId())) )
             return;
 
+        $this->usercom->updateCustomer($usercomCustomerId,$this->usercom->getCustomerData());
 
         $data = array(
             "user_id" => $usercomCustomerId,

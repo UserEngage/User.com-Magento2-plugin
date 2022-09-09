@@ -7,14 +7,17 @@ class OrderPlaceAfter implements \Magento\Framework\Event\ObserverInterface
 
     protected $helper;
     protected $usercom; 
+    protected $addressConfig;
 
 
     public function __construct(
         \Usercom\Analytics\Helper\Data $helper,
-        \Usercom\Analytics\Helper\Usercom $usercom
+        \Usercom\Analytics\Helper\Usercom $usercom,
+        \Magento\Customer\Model\Address\Config $addressConfig
     ){
         $this->helper = $helper;
         $this->usercom = $usercom;
+        $this->addressConfig = $addressConfig;
     }
 
     public function execute(
@@ -29,14 +32,30 @@ class OrderPlaceAfter implements \Magento\Framework\Event\ObserverInterface
         unset($postData["paymentMethod"]);
         unset($postData["billingAddress"]);
 
-        $this->usercom->updateCustomer($this->usercom->getUsercomCustomerId(),array("attributes"=>$postData));
+        $this->usercom->updateCustomer($usercomCustomerId,array("attributes"=>$postData));
 
+        $order = $observer->getEvent()->getOrder();
+        $orderData = $order->getData();
+        unset($orderData["addresses"]); 
+        unset($orderData["status_histories"]);
+        unset($orderData["payment"]);
+        unset($orderData["extension_attributes"]); 
+
+        $orderData["shipping_address"] = $this->addressConfig->getFormatByCode(\Magento\Customer\Model\Address\Config::DEFAULT_ADDRESS_FORMAT)->getRenderer()->renderArray($order->getShippingAddress());
+        $orderData["billing_address"] = $this->addressConfig->getFormatByCode(\Magento\Customer\Model\Address\Config::DEFAULT_ADDRESS_FORMAT)->getRenderer()->renderArray($order->getBillingAddress());
+        $orderData["payment"] = json_encode(print_r($order->getPayment()->getMethodInstance()->getTitle(),true));
+
+        $orderData["items"] = "";
+        foreach ($order->getAllItems() as $item)
+            $orderData["items"] .= $item->getName().",";
+        $orderData["items"] = trim($orderData["items"],","); 
+            
         $data = array(
             "user_id" => $usercomCustomerId,
             "name" => "order",
             "timestamp" => time(),
-            "data" => array_merge($postData,array(
-                "step" => 3
+            "data" => array_merge($postData,$orderData,array(
+                "step" => "order_completed"
             ))
         );
 
