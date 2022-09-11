@@ -58,7 +58,7 @@ class OrderPaymentPay implements \Magento\Framework\Event\ObserverInterface
 
             $this->usercom->createProductEvent($usercomProductId,array(
                 "id" => $usercomProductId,
-                "user_custom_id" => $customerId,
+                "user_custom_id" => base64_encode($customerId),
                 "user_id" => $usercomCustomerId,
                 "data" => $productData,
                 "event_type" => "purchase",

@@ -58,7 +58,7 @@ class ShippingInformationManagement
                 "phone_number" => $shippingAddress->getTelephone(),
                 "items" => $items,
                 "region" => $shippingAddress->getRegion(),
-                "street" => $shippingAddress->getStreet(),
+                "street" => implode(",",$shippingAddress->getStreet()),
                 "postcode" => $shippingAddress->getPostcode(),
                 "city" => $shippingAddress->getCity()
             )

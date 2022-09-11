@@ -56,7 +56,8 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/Usercom.log');
         $logger = new \Zend\Log\Logger();
         $logger->addWriter($writer);
-        $logger->info($url." - ".(($err) ?: $response));
+        $logger->info($url." - POST  - ".json_encode($data));
+        $logger->info($url." - answer -".(($err) ?: $response));
 
         return ($err) ? null : json_decode($response);
     }    
@@ -90,7 +91,8 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/Usercom.log');
         $logger = new \Zend\Log\Logger();
         $logger->addWriter($writer);
-        $logger->info($url." - ".(($err) ?: $response));
+        $logger->info($url." - PUT  - ".json_encode($data));
+        $logger->info($url." - answer - ".(($err) ?: $response));
 
         return ($err) ? null : json_decode($response);
     }    
@@ -245,10 +247,11 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
 
         return array(
             "custom_id" => base64_encode($customerId),
-            "first_name" => $customer->getFirstName(),
-            "last_name" => $customer->getLastName(),
+            "first_name" => $customer->getFirstname(),
+            "last_name" => $customer->getLastname(),
             "email" => $customer->getEmail(),
-            "unsubscribed" => !$this->subscriber->loadByCustomerId($customerId)->isSubscribed()
+            "unsubscribed" => !$this->subscriber->loadByCustomerId($customerId)->isSubscribed(),
+            "user_key" => $this->getFrontUserKey()
         );
     }
 
