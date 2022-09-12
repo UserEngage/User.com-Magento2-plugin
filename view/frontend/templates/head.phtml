@@ -17,7 +17,7 @@ set userKey(value){
 },
 apiKey: '<?= $block->getApi() ?>'
 <?php if ($id = $block->getCustomerId()): ?>
-,user_id: <?= $id ?>
+,user_id: '<?= base64_encode($id) ?>'
 <?php endif ?>
 };
 </script>
