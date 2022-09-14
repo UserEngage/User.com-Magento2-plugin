@@ -9,18 +9,22 @@ class SyncProductsPurchase extends \Magento\Backend\App\Action{
     protected $syncTimeArray;
     protected $orderCollectionFactory;
     protected $usercom;
+    protected $addressConfig;
+
 
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Usercom\Analytics\Block\System\Config\SyncTime $syncTime,
         \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $orderCollectionFactory,
-        \Usercom\Analytics\Helper\Usercom $usercom
+        \Usercom\Analytics\Helper\Usercom $usercom,
+        \Magento\Customer\Model\Address\Config $addressConfig
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->syncTimeArray = $syncTime->toOptionArray();
         $this->orderCollectionFactory = $orderCollectionFactory;
         $this->usercom = $usercom;
+        $this->addressConfig = $addressConfig;
         parent::__construct($context);
     }
 
@@ -67,11 +71,21 @@ class SyncProductsPurchase extends \Magento\Backend\App\Action{
 
                 $productData = $this->usercom->getProductData($productId); 
 
+                $orderData = $order->getData();
+                unset($orderData["addresses"]); 
+                unset($orderData["status_histories"]);
+                unset($orderData["payment"]);
+                unset($orderData["extension_attributes"]); 
+
+                $orderData["shipping_address"] = $this->addressConfig->getFormatByCode(\Magento\Customer\Model\Address\Config::DEFAULT_ADDRESS_FORMAT)->getRenderer()->renderArray($order->getShippingAddress());
+                $orderData["billing_address"] = $this->addressConfig->getFormatByCode(\Magento\Customer\Model\Address\Config::DEFAULT_ADDRESS_FORMAT)->getRenderer()->renderArray($order->getBillingAddress());
+                $orderData["payment"] = json_encode(print_r($order->getPayment()->getMethodInstance()->getTitle(),true));
+
                 $data = array(
                     "id" => $usercomProductId,
                     "user_custom_id" => $customerId,
                     "user_id" => $usercomCustomerId,
-                    "data" => $productData,
+                    "data" => array_merge($orderData,$productData),
                     "event_type" => "purchase",
                     "timestamp" => strtotime($order->getData("created_at"))
                 );
