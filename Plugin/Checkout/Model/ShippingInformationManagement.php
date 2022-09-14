@@ -7,16 +7,19 @@ class ShippingInformationManagement
     protected $helper;
     protected $usercom; 
     protected $cart;
+    protected $session;
 
 
     public function __construct(
         \Usercom\Analytics\Helper\Data $helper,
         \Usercom\Analytics\Helper\Usercom $usercom,
-        \Magento\Checkout\Model\Cart $cart
+        \Magento\Checkout\Model\Cart $cart,
+        \Magento\Checkout\Model\Session $session
     ){
         $this->helper = $helper;
         $this->usercom = $usercom;
         $this->cart = $cart;
+        $this->session = $session;
     }
     /**
      * @param \Magento\Checkout\Model\ShippingInformationManagement $subject
@@ -35,8 +38,12 @@ class ShippingInformationManagement
         $data = array(
             "first_name" =>  $shippingAddress->getFirstName(),
             "last_name" => $shippingAddress->getLastName(),
-            "email" => $shippingAddress->getEmail(),
-            "phone_number" => $shippingAddress->getTelephone()
+            "email" =>  $this->session->getGuestCustomerEmail(),
+            "phone_number" => $shippingAddress->getTelephone(),
+            "region" => $shippingAddress->getRegion(),
+            "street" => implode(",",$shippingAddress->getStreet()),
+            "postcode" => $shippingAddress->getPostcode(),
+            "city" => $shippingAddress->getCity()
         );
 
         $this->usercom->updateCustomer($usercomCustomerId,$data);
@@ -54,7 +61,7 @@ class ShippingInformationManagement
                 "step" => 2,
                 "first_name" =>  $shippingAddress->getFirstName(),
                 "last_name" => $shippingAddress->getLastName(),
-                "email" => $shippingAddress->getEmail(),
+                "email" =>  $this->session->getGuestCustomerEmail(),
                 "phone_number" => $shippingAddress->getTelephone(),
                 "items" => $items,
                 "region" => $shippingAddress->getRegion(),

@@ -41,7 +41,7 @@ class CartAddProductComplete implements \Magento\Framework\Event\ObserverInterfa
             "id" => $usercomProductId,
             "user_custom_id" => $this->usercom->getCustomerData()["custom_id"],
             "user_id" => $usercomCustomerId,
-            "data" => $this->usercom->getProductData($productId),
+            "data" => array_merge($this->usercom->getProductData($productId), array("quantity" => (isset($productData['qty'])?$productData["qty"]:1))),
             "event_type" => "add to cart",
             "timestamp" => time()
         ));

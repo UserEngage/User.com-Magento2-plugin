@@ -49,7 +49,7 @@ class SyncCustomer extends \Magento\Backend\App\Action{
         $errorMessage = "";
 
         foreach($customers as $customer){
-            if(!($usercomCustomerId = $this->usercom->getUsercomCustomerId($customer->getId())) ){
+            if(!($usercomCustomerId = $this->usercom->getUsercomCustomerId($customer->getId(), false)) ){
                 $errorMessage .= "Can't create customer by id: ".$customer->getId();
             }
         }

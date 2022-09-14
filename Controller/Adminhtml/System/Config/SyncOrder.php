@@ -8,19 +8,22 @@ class SyncOrder extends \Magento\Backend\App\Action{
     protected $resultJsonFactory;
     protected $syncTimeArray;
     protected $orderCollectionFactory;
-    protected $usercom;
+    protected $usercom;  
+    protected $addressConfig;
 
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Usercom\Analytics\Block\System\Config\SyncTime $syncTime,
         \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $orderCollectionFactory,
-        \Usercom\Analytics\Helper\Usercom $usercom
+        \Usercom\Analytics\Helper\Usercom $usercom,
+        \Magento\Customer\Model\Address\Config $addressConfig
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->syncTimeArray = $syncTime->toOptionArray();
         $this->orderCollectionFactory = $orderCollectionFactory;
         $this->usercom = $usercom;
+        $this->addressConfig = $addressConfig;
         parent::__construct($context);
     }
 
@@ -41,26 +44,41 @@ class SyncOrder extends \Magento\Backend\App\Action{
         $from = date('Y-m-d h:i:s', $from);
 
         $orders = $this->orderCollectionFactory->create()
-                                            ->addAttributeToFilter('created_at', array('from' => $from))
-                                            ->load();
+                                               ->addAttributeToFilter('created_at', array('from' => $from))
+                                               ->load();
 
         $errorMessage = "";
 
         foreach($orders as $order){
             $customerId = $order->getCustomerId();
-            if(!($usercomCustomerId = $this->usercom->getUsercomCustomerId($customerId))){
+            if(!($usercomCustomerId = $this->usercom->getUsercomCustomerId($customerId, false))){
                 $errorMessage .= "Can't create user from order by id: ". $order->getId()."<br>";
                 continue;
             }
+
+            $orderData = $order->getData();
+            unset($orderData["addresses"]); 
+            unset($orderData["status_histories"]);
+            unset($orderData["payment"]);
+            unset($orderData["extension_attributes"]); 
+
+            $orderData["shipping_address"] = $this->addressConfig->getFormatByCode(\Magento\Customer\Model\Address\Config::DEFAULT_ADDRESS_FORMAT)->getRenderer()->renderArray($order->getShippingAddress());
+            $orderData["billing_address"] = $this->addressConfig->getFormatByCode(\Magento\Customer\Model\Address\Config::DEFAULT_ADDRESS_FORMAT)->getRenderer()->renderArray($order->getBillingAddress());
+            $orderData["payment"] = json_encode(print_r($order->getPayment()->getMethodInstance()->getTitle(),true));
+
+            $orderData["items"] = "";
+            foreach ($order->getAllItems() as $item)
+                $orderData["items"] .= $item->getName().",";
+            $orderData["items"] = trim($orderData["items"],","); 
 
 
             $data = array(
                 "user_id" => $usercomCustomerId,
                 "name" => "order",
                 "timestamp" => strtotime($order->getData("created_at")),
-                "data" => array(
+                "data" =>array_merge($orderData, array(
                     "synchronization" => "magento2"
-                )
+                ))
             );
             if(!isset($this->usercom->createEvent($data)->created) ){
                 $errorMessage .= "Can't create order by id: ".$order->getId()."<br>";

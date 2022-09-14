@@ -60,7 +60,7 @@ class OrderPaymentPay implements \Magento\Framework\Event\ObserverInterface
                 "id" => $usercomProductId,
                 "user_custom_id" => base64_encode($customerId),
                 "user_id" => $usercomCustomerId,
-                "data" => $productData,
+                "data" => array_merge($productData, array("quantity"=>$product->getQtyOrdered())),
                 "event_type" => "purchase",
                 "timestamp" => time()
             ));

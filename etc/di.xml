@@ -4,4 +4,8 @@
     <type name="Magento\Checkout\Model\ShippingInformationManagement">
         <plugin name="usercom.analytics.get_shipping_info" type="Usercom\Analytics\Plugin\Checkout\Model\ShippingInformationManagement" sortOrder="1"/>
     </type>
+    <type name="Magento\Customer\Model\AccountManagement">
+        <plugin name="usercom.analytics.get_semail_info" type="Usercom\Analytics\Plugin\Customer\Model\AccountManagement" sortOrder="1"/>
+    </type>
+
 </config>

@@ -48,7 +48,7 @@ class SyncProductsPurchase extends \Magento\Backend\App\Action{
 
         foreach($orders as $order){
             $customerId = $order->getCustomerId();
-            if(!($usercomCustomerId = $this->usercom->getUsercomCustomerId($customerId))){
+            if(!($usercomCustomerId = $this->usercom->getUsercomCustomerId($customerId, false))){
                 $errorMessage .= "Can't create user from order by id: ". $order->getId()."<br>";
                 continue;
             }

@@ -194,7 +194,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->sendPostEvent("events/", $data);
     }
 
-    public function getUsercomCustomerId($customerId = null){
+    public function getUsercomCustomerId($customerId = null, $searchWithUserKey = true){
 
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $customerSession = $objectManager->get('Magento\Customer\Model\Session');
@@ -203,18 +203,19 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         if($customerId == null && $customerSession->isLoggedIn()) {
             $customerId = $customerSession->getCustomer()->getId();
         }
-
+        
         //if customer exist in user.com 
         if( ($customerId && ($usercomCustomer = $this->getCustomerByCustomId($customerId)) && isset($usercomCustomer->id)) || 
-            ($usercomCustomer = $this->findCustomerByUserKey($this->getFrontUserKey())) && isset($usercomCustomer->id)  )
+            ($usercomCustomer = $this->findCustomerByUserKey($this->getFrontUserKey())) && isset($usercomCustomer->id) && $searchWithUserKey )
             return $usercomCustomer->id;
 
         //else create customer
-        else {
-            $data = $this->getCustomerData($customerId);
+        else if ($customerId) {
+            $data = array_merge($this->getCustomerData($customerId),array("custom_id"=>base64_encode($customerId)));
             //if customer created return customer id
             return ( ($usercomCustomer = $this->createCustomer($data)) && isset($usercomCustomer->id) ) ? $usercomCustomer->id : false;
-        }
+        } else
+            return null;
     }
 
     public function getUsercomProductId ($productId = null) {
