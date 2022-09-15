@@ -57,6 +57,16 @@ class SyncProductsPurchase extends \Magento\Backend\App\Action{
                 continue;
             }
 
+            $orderData = $order->getData();
+            unset($orderData["addresses"]); 
+            unset($orderData["status_histories"]);
+            unset($orderData["payment"]);
+            unset($orderData["extension_attributes"]); 
+
+            $orderData["shipping_address"] = $this->addressConfig->getFormatByCode(\Magento\Customer\Model\Address\Config::DEFAULT_ADDRESS_FORMAT)->getRenderer()->renderArray($order->getShippingAddress());
+            $orderData["billing_address"] = $this->addressConfig->getFormatByCode(\Magento\Customer\Model\Address\Config::DEFAULT_ADDRESS_FORMAT)->getRenderer()->renderArray($order->getBillingAddress());
+            $orderData["payment"] = json_encode(print_r($order->getPayment()->getMethodInstance()->getTitle(),true));
+
             foreach($order->getAllItems() as $product){
 
                 if($product->getTypeId() == \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE)
@@ -71,19 +81,10 @@ class SyncProductsPurchase extends \Magento\Backend\App\Action{
 
                 $productData = $this->usercom->getProductData($productId); 
 
-                $orderData = $order->getData();
-                unset($orderData["addresses"]); 
-                unset($orderData["status_histories"]);
-                unset($orderData["payment"]);
-                unset($orderData["extension_attributes"]); 
-
-                $orderData["shipping_address"] = $this->addressConfig->getFormatByCode(\Magento\Customer\Model\Address\Config::DEFAULT_ADDRESS_FORMAT)->getRenderer()->renderArray($order->getShippingAddress());
-                $orderData["billing_address"] = $this->addressConfig->getFormatByCode(\Magento\Customer\Model\Address\Config::DEFAULT_ADDRESS_FORMAT)->getRenderer()->renderArray($order->getBillingAddress());
-                $orderData["payment"] = json_encode(print_r($order->getPayment()->getMethodInstance()->getTitle(),true));
 
                 $data = array(
                     "id" => $usercomProductId,
-                    "user_custom_id" => $customerId,
+                    "user_custom_id" => base64_encode($customerId),
                     "user_id" => $usercomCustomerId,
                     "data" => array_merge($orderData,$productData),
                     "event_type" => "purchase",

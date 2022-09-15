@@ -288,6 +288,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
                 $data[$a->getName()] = $value;
             }
         }
+        unset($data["media_gallery"]);
 
         return $data;
     }
