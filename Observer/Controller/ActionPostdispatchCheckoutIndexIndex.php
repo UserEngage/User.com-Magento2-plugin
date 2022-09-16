@@ -30,7 +30,7 @@ class ActionPostdispatchCheckoutIndexIndex implements \Magento\Framework\Event\O
             return;
 
         $products = $this->cart->getQuote()->getAllItems();
-        $userCustomId = $this->usercom->getCustomerData()["custom_id"];
+        $userCustomId = ($this->usercom->getCustomerData()) ? $this->usercom->getCustomerData()["custom_id"] : null;
 
         foreach ($products as $product) {
 

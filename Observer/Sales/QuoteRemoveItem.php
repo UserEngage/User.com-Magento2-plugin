@@ -30,7 +30,7 @@ class QuoteRemoveItem implements \Magento\Framework\Event\ObserverInterface
 
         $this->usercom->createProductEvent($usercomProductId,array(
             "id" => $usercomProductId,
-            "user_custom_id" => $this->usercom->getCustomerData()["custom_id"],
+            "user_custom_id" => ($this->usercom->getCustomerData()) ? $this->usercom->getCustomerData()["custom_id"] : null,
             "user_id" => $usercomCustomerId,
             "data" => $this->usercom->getProductData($productId),
             "event_type" => "remove",
