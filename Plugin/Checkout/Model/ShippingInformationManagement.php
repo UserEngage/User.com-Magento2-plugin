@@ -43,10 +43,19 @@ class ShippingInformationManagement
             "region" => $shippingAddress->getRegion(),
             "street" => implode(",",$shippingAddress->getStreet()),
             "postcode" => $shippingAddress->getPostcode(),
-            "city" => $shippingAddress->getCity()
+            "city" => $shippingAddress->getCity(),
+            "company" => $shippingAddress->getCompany(),
         );
 
         $this->usercom->updateCustomer($usercomCustomerId,$data);
+
+
+
+       $user = $this->usercom->getCustomerById($usercomCustomerId); 
+        if (empty($user->companies) && ($companyName = $shippingAddress->getCompany()) && ($company = $this->usercom->createCompany(array("name"=>$companyName))) && isset($company->id)){
+            $this->usercom->companyAddMember($company->id, array("user_id"=>$usercomCustomerId));
+        }   
+
 
         $items = "";
         foreach ($this->cart->getQuote()->getAllVisibleItems() as $item)
@@ -67,7 +76,8 @@ class ShippingInformationManagement
                 "region" => $shippingAddress->getRegion(),
                 "street" => implode(",",$shippingAddress->getStreet()),
                 "postcode" => $shippingAddress->getPostcode(),
-                "city" => $shippingAddress->getCity()
+                "city" => $shippingAddress->getCity(),
+                "company" => $shippingAddress->getCompany()
             )
         );
 

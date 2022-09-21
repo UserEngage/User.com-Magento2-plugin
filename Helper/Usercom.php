@@ -124,11 +124,43 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/Usercom.log');
         $logger = new \Zend\Log\Logger();
         $logger->addWriter($writer);
-        $logger->info($url." - ".(($err) ?: $response));
+        $logger->info($url." - GET");
+        $logger->info($url." - answer - ".(($err) ?: $response));
 
         return ($err) ? null : json_decode($response);
     }
 
+
+    public function sendDeleteEvent($url){
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://".$this->helper->getSubdomain()."/api/public/".$url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "DELETE",
+            CURLOPT_HTTPHEADER => array(
+                "Accept: */*; version=2",
+                "authorization: Token ".$this->helper->getToken(),
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/Usercom.log');
+        $logger = new \Zend\Log\Logger();
+        $logger->addWriter($writer);
+        $logger->info($url." - DELETE");
+
+        return ($err) ? null : json_decode($response);
+    }    
 
     public function getCustomerById($id){
 
@@ -194,6 +226,25 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->sendPostEvent("events/", $data);
     }
 
+    public function createCompany($data){
+
+        return $this->sendPostEvent("companies/", $data);
+    }
+    
+    public function deleteCompany($id){
+
+        return $this->sendDeleteEvent("companies/$id");
+    }
+
+    public function companyRemoveMember($id, $data){
+
+        $this->sendPostEvent("companies/$id/remove_member/", $data);
+    }
+
+    public function companyAddMember($id, $data){
+
+        $this->sendPostEvent("companies/$id/add_member/", $data);
+    }
     public function getUsercomCustomerId($customerId = null, $searchWithUserKey = true){
 
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
