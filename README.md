@@ -61,4 +61,6 @@ Historical data can be synchronized within a specific date range. You can synchr
 - usercom id - user identifier created inside the User.com
 - userKey - user identifier automatically created by User.com widget
 
+## LICENSE
 
+[Apache 2.0 License](https://github.com/UserEngage/User.com-Magento2-plugin/blob/master/LICENSE.md)
