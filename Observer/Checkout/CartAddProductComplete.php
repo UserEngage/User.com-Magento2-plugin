@@ -9,18 +9,21 @@ class CartAddProductComplete implements \Magento\Framework\Event\ObserverInterfa
     protected $usercom;
     protected $request;
     protected $configurableProduct;
+    protected $customerSession;
 
     public function __construct(
         \Usercom\Analytics\Helper\Data $helper,
         \Usercom\Analytics\Helper\Usercom $usercom,
         \Magento\Framework\App\RequestInterface $request,
-        \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurableProduct
+        \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurableProduct,
+        \Magento\Customer\Model\Session $customerSession
     ){
     
         $this->helper = $helper;
         $this->usercom = $usercom;
         $this->request = $request;
         $this->configurableProduct = $configurableProduct;
+        $this->customerSession = $customerSession;
     }
 
     public function execute(
@@ -39,7 +42,7 @@ class CartAddProductComplete implements \Magento\Framework\Event\ObserverInterfa
 
         $this->usercom->createProductEvent($usercomProductId,array(
             "id" => $usercomProductId,
-            "user_custom_id" => ($this->usercom->getCustomerData()) ? $this->usercom->getCustomerData()["custom_id"] : null,
+            "user_custom_id" => ($this->customerSession->isLoggedIn()) ? base64_encode($this->customerSession->getCustomer()->getId()) : null,
             "user_id" => $usercomCustomerId,
             "data" => array_merge($this->usercom->getProductData($productId), array("quantity" => (isset($productData['qty'])?$productData["qty"]:1))),
             "event_type" => "add to cart",

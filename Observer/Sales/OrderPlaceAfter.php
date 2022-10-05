@@ -40,9 +40,10 @@ class OrderPlaceAfter implements \Magento\Framework\Event\ObserverInterface
         unset($orderData["status_histories"]);
         unset($orderData["payment"]);
         unset($orderData["extension_attributes"]); 
-
-        $orderData["shipping_address"] = $this->addressConfig->getFormatByCode(\Magento\Customer\Model\Address\Config::DEFAULT_ADDRESS_FORMAT)->getRenderer()->renderArray($order->getShippingAddress());
-        $orderData["billing_address"] = $this->addressConfig->getFormatByCode(\Magento\Customer\Model\Address\Config::DEFAULT_ADDRESS_FORMAT)->getRenderer()->renderArray($order->getBillingAddress());
+        
+        $address = $this->addressConfig->getFormatByCode(\Magento\Customer\Model\Address\Config::DEFAULT_ADDRESS_FORMAT)->getRenderer(); 
+        $orderData["shipping_address"] = $address->renderArray($order->getShippingAddress());
+        $orderData["billing_address"] = $address->renderArray($order->getBillingAddress());
         $orderData["payment"] = json_encode(print_r($order->getPayment()->getMethodInstance()->getTitle(),true));
 
         $orderData["items"] = "";

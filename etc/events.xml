@@ -9,7 +9,7 @@
     <event name="checkout_cart_add_product_complete"> 
         <observer instance="Usercom\Analytics\Observer\Checkout\CartAddProductComplete" name="usercom_checkout_cart_add_product_complete"/> 
     </event>
-    <event name="catalog_controller_product_view"> 
+    <event name="controller_action_predispatch_catalog_product_view"> 
         <observer instance="Usercom\Analytics\Observer\Catalog\ControllerProductView" name="usercom_catalog_controller_product_view"/> 
     </event>
     <event name="controller_action_postdispatch_checkout_index_index"> 

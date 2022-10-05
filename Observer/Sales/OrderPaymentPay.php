@@ -35,20 +35,19 @@ class OrderPaymentPay implements \Magento\Framework\Event\ObserverInterface
             return;
 
         $order = $observer->getPayment()->getOrder();
-        $customerId = $this->customerRepositoryInterface->getById($order->getCustomerId())->getId();
+        $customerId = $order->getCustomerId();
 
         // create customer if not exist
         if(!($usercomCustomerId = $this->usercom->getUsercomCustomerId($customerId)))
             return;
 
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $products = array();
 
         foreach($order->getAllItems() as $product){
 
             $productId = $product->getProductId();
 
-            if($this->productRepository->getById($productId)->getTypeId() == \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE)
+            if($product->getTypeId() == \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE)
                 continue;
 
             if(!($usercomProductId = $this->usercom->getUsercomProductId($productId)))

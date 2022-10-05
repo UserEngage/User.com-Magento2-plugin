@@ -8,18 +8,18 @@ class ActionPostdispatchCheckoutIndexIndex implements \Magento\Framework\Event\O
     protected $helper;
     protected $usercom;
     protected $cart;
-    protected $productRepository;
+    protected $customerSession;
 
     public function __construct(
         \Usercom\Analytics\Helper\Data $helper,
         \Usercom\Analytics\Helper\Usercom $usercom,
         \Magento\Checkout\Model\Cart $cart,
-        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository   
+        \Magento\Customer\Model\Session $customerSession   
     ){
         $this->helper = $helper;
         $this->usercom = $usercom;
         $this->cart = $cart;
-        $this->productRepository = $productRepository;
+        $this->customerSession = $customerSession;
     }
 
     public function execute(
@@ -30,13 +30,13 @@ class ActionPostdispatchCheckoutIndexIndex implements \Magento\Framework\Event\O
             return;
 
         $products = $this->cart->getQuote()->getAllItems();
-        $userCustomId = ($this->usercom->getCustomerData()) ? $this->usercom->getCustomerData()["custom_id"] : null;
+        $userCustomId = ($this->customerSession->isLoggedIn()) ? base64_encode($this->customerSession->getCustomer()->getId()) : null;
 
         foreach ($products as $product) {
 
             $productId = $product->getProductId();
 
-            if($this->productRepository->getById($productId)->getTypeId() == \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE)
+            if($product->getTypeId() == \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE)
                 continue;
 
             if(!($usercomProductId = $this->usercom->getUsercomProductId($productId)) )

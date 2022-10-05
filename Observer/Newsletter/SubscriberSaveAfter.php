@@ -37,7 +37,7 @@ class SubscriberSaveAfter implements \Magento\Framework\Event\ObserverInterface
         $this->usercom->createEvent(array(
             "user_id" => $usercomCustomerId,
             "data" => array(
-                "email" => ($this->usercom->getCustomerData()) ? $this->usercom->getCustomerData()["email"] : null,
+                "email" => $subscriber->getSubscriberEmail(),
                 "place" => $this->url->getCurrentUrl()
             ),
             "name" => "newsletter_signup",

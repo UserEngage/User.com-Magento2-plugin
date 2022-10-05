@@ -41,9 +41,11 @@ class SyncCustomer extends \Magento\Backend\App\Action{
         $from = date('Y-m-d h:i:s', $from);
 
         $customers = $this->customerFactory->create()
-                                            ->getCollection()
-                                            ->addAttributeToFilter('created_at', array('from' => $from))
-                                            ->load();
+                                           ->getCollection()
+                                           ->addAttributeToSelect("created_at")
+                                           ->addAttributeToSelect("id")
+                                           ->addAttributeToFilter('created_at', array('from' => $from))
+                                           ->load();
 
 
         $errorMessage = "";

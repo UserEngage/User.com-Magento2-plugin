@@ -11,6 +11,10 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
     protected $storeManager;
     protected $productRepositoryFactory;
     protected $subscriber;
+    protected $customerSession;
+    protected $customer;
+    protected $product;
+    protected $resourceConnection;
 
     public function __construct(
         \Usercom\Analytics\Helper\Data $helper,
@@ -18,13 +22,21 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Store\Model\StoreManagerInterface $storeManager, 
         \Magento\Catalog\Api\ProductRepositoryInterfaceFactory $productRepositoryFactory,
         \Magento\Newsletter\Model\Subscriber $subscriber,
+        \Magento\Customer\Model\Session $customerSession,
+        \Magento\Customer\Model\Customer $customer,
+        \Magento\Catalog\Model\Product $product,
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Framework\App\Helper\Context $context
     ) {
         $this->helper = $helper;
         $this->cookieManager = $cookieManager;
         $this->storeManager = $storeManager;
         $this->productRepositoryFactory = $productRepositoryFactory;
-        $this->subscriber= $subscriber;
+        $this->subscriber = $subscriber;
+        $this->customerSession = $customerSession;
+        $this->customer = $customer;
+        $this->product = $product;
+        $this->resourceConnection = $resourceConnection;
         parent::__construct($context);
     }
 
@@ -247,12 +259,9 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
     }
     public function getUsercomCustomerId($customerId = null, $searchWithUserKey = true){
 
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $customerSession = $objectManager->get('Magento\Customer\Model\Session');
-
         //if not customerId but login
-        if($customerId == null && $customerSession->isLoggedIn()) {
-            $customerId = $customerSession->getCustomer()->getId();
+        if($customerId == null && $this->customerSession->isLoggedIn()) {
+            $customerId = $this->customerSession->getCustomer()->getId();
         }
         
         //if customer exist in user.com 
@@ -284,18 +293,15 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getCustomerData($customerId = null){
 
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $customerSession = $objectManager->get('Magento\Customer\Model\Session');
-
         //if not customerId but login
-        if($customerId == null && $customerSession->isLoggedIn()) {
-            $customerId = $customerSession->getCustomer()->getId();
+        if($customerId == null && $this->customerSession->isLoggedIn()) {
+            $customerId = $this->customerSession->getCustomer()->getId();
         }
 
         if(!$customerId)
             return;
 
-        $customer = $objectManager->create('Magento\Customer\Model\Customer')->load($customerId);
+        $customer = $this->customer->load($customerId);
 
         return array(
             "custom_id" => base64_encode($customerId),
@@ -312,23 +318,41 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         if(!$productId)
             return;
 
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $product = $objectManager->create('Magento\Catalog\Model\Product')->load($productId);
+        $product = $this->product->load($productId);
+
         $categories = $product->getCategoryIds();
-        $categoryName = "";
-        foreach($categories as $category){
-            $cat = $objectManager->create('Magento\Catalog\Model\Category')->load($category);
-            $categoryName .= $cat->getName().", ";
-        }
-        $categoryName = rtrim($categoryName, ", ");
+        $connection = $this->resourceConnection;
+        $ccev = $connection->getTableName('catalog_category_entity_varchar');
+        $cce = $connection->getTableName('catalog_category_entity');
+        $ea = $connection->getTableName('eav_attribute');
+        $eet = $connection->getTableName('eav_entity_type');
+        $query = "SELECT GROUP_CONCAT(ccev.value SEPARATOR ', ') as 'categories'
+            FROM ".$ccev." ccev
+            JOIN ".$cce." cce
+            ON cce.entity_id = ccev.entity_id
+            AND ccev.attribute_id =
+            (
+                SELECT attribute_id
+                FROM ".$ea." ea
+                WHERE attribute_code = 'name'
+                and entity_type_id =
+                (
+                    SELECT entity_type_id
+                    FROM ".$eet." eet
+                    WHERE entity_type_code = 'catalog_category'
+                       )
+             ) and cce.entity_id in (".implode(",",$categories).")"; 
+        $result = $connection->getConnection()->fetchAll($query);
+        $categoryName = $result[0]['categories']; 
+
 
         $data =  array(
             "custom_id" => $productId,
             "name" => $product->getName(),
             "price" => (float)$product->getFinalPrice(),
             "category_name" => $categoryName, 
-            "product_url" => $objectManager->create('Magento\Catalog\Model\Product')->load($productId)->getProductUrl(),
-            "image_url" => $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'catalog/product' . $this->productRepositoryFactory->create()->getById($productId)->getData('image')
+            "product_url" => $product->getProductUrl(),
+            "image_url" => $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'catalog/product' . $product->getData('image')
         );
         
         $attributes = $product->getAttributes();
