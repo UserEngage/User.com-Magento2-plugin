@@ -35,7 +35,7 @@ class OrderPaymentPay implements \Magento\Framework\Event\ObserverInterface
             return;
 
         $order = $observer->getPayment()->getOrder();
-        $customerId = $order->getCustomerId();
+        $customerId = $this->customerRepositoryInterface->getById($order->getCustomerId())->getId();
 
         // create customer if not exist
         if(!($usercomCustomerId = $this->usercom->getUsercomCustomerId($customerId)))
