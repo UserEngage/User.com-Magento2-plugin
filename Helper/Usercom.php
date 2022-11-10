@@ -65,12 +65,6 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
 
         curl_close($curl);
 
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/Usercom.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info($url." - POST  - ".json_encode($data));
-        $logger->info($url." - answer -".(($err) ?: $response));
-
         return ($err) ? null : json_decode($response);
     }    
 
@@ -100,12 +94,6 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
 
         curl_close($curl);
 
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/Usercom.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info($url." - PUT  - ".json_encode($data));
-        $logger->info($url." - answer - ".(($err) ?: $response));
-
         return ($err) ? null : json_decode($response);
     }    
 
@@ -133,12 +121,6 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
 
         curl_close($curl);
 
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/Usercom.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info($url." - GET");
-        $logger->info($url." - answer - ".(($err) ?: $response));
-
         return ($err) ? null : json_decode($response);
     }
 
@@ -165,11 +147,6 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         $err = curl_error($curl);
 
         curl_close($curl);
-
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/Usercom.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info($url." - DELETE");
 
         return ($err) ? null : json_decode($response);
     }    
