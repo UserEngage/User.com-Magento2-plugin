@@ -1,4 +1,5 @@
 <?php
+
 namespace Usercom\Analytics\Helper;
 
 class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
@@ -19,7 +20,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
     public function __construct(
         \Usercom\Analytics\Helper\Data $helper,
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
-        \Magento\Store\Model\StoreManagerInterface $storeManager, 
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Catalog\Api\ProductRepositoryInterfaceFactory $productRepositoryFactory,
         \Magento\Newsletter\Model\Subscriber $subscriber,
         \Magento\Customer\Model\Session $customerSession,
@@ -40,12 +41,13 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         parent::__construct($context);
     }
 
-    public function sendPostEvent($url,$data){
+    public function sendPostEvent($url, $data)
+    {
 
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://".$this->helper->getSubdomain()."/api/public/".$url,
+            CURLOPT_URL => "https://" . $this->helper->getSubdomain() . "/api/public/" . $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -55,7 +57,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
             CURLOPT_POSTFIELDS => json_encode($data),
             CURLOPT_HTTPHEADER => array(
                 "Accept: */*; version=2",
-                "authorization: Token ".$this->helper->getToken(),
+                "authorization: Token " . $this->helper->getToken(),
                 "content-type: application/json"
             ),
         ));
@@ -66,15 +68,16 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         curl_close($curl);
 
         return ($err) ? null : json_decode($response);
-    }    
+    }
 
 
-    public function sendPutEvent($url,$data){
+    public function sendPutEvent($url, $data)
+    {
 
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://".$this->helper->getSubdomain()."/api/public/".$url,
+            CURLOPT_URL => "https://" . $this->helper->getSubdomain() . "/api/public/" . $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -84,7 +87,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
             CURLOPT_POSTFIELDS => json_encode($data),
             CURLOPT_HTTPHEADER => array(
                 "Accept: */*; version=2",
-                "authorization: Token ".$this->helper->getToken(),
+                "authorization: Token " . $this->helper->getToken(),
                 "content-type: application/json"
             ),
         ));
@@ -95,15 +98,16 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         curl_close($curl);
 
         return ($err) ? null : json_decode($response);
-    }    
+    }
 
 
-    public function sendGetEvent($url){
+    public function sendGetEvent($url)
+    {
 
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://'.$this->helper->getSubdomain().'/api/public/'.$url,
+            CURLOPT_URL => 'https://' . $this->helper->getSubdomain() . '/api/public/' . $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -112,7 +116,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
             CURLOPT_CUSTOMREQUEST => "GET",
             CURLOPT_HTTPHEADER => array(
                 "Accept: */*; version=2",
-                "authorization: Token ".$this->helper->getToken()
+                "authorization: Token " . $this->helper->getToken()
             ),
         ));
 
@@ -125,12 +129,13 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
 
-    public function sendDeleteEvent($url){
+    public function sendDeleteEvent($url)
+    {
 
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://".$this->helper->getSubdomain()."/api/public/".$url,
+            CURLOPT_URL => "https://" . $this->helper->getSubdomain() . "/api/public/" . $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -139,7 +144,7 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
             CURLOPT_CUSTOMREQUEST => "DELETE",
             CURLOPT_HTTPHEADER => array(
                 "Accept: */*; version=2",
-                "authorization: Token ".$this->helper->getToken(),
+                "authorization: Token " . $this->helper->getToken(),
             ),
         ));
 
@@ -149,133 +154,153 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         curl_close($curl);
 
         return ($err) ? null : json_decode($response);
-    }    
+    }
 
-    public function getCustomerById($id){
+    public function getCustomerById($id)
+    {
 
-        return $this->sendGetEvent('users/'.$id.'/');
+        return $this->sendGetEvent('users/' . $id . '/');
     }
 
 
-    public function getCustomerByCustomId($custom_id){
+    public function getCustomerByCustomId($custom_id)
+    {
 
-        return $this->sendGetEvent('users-by-id/'.base64_encode($custom_id).'/'); 
+        return $this->sendGetEvent('users-by-id/' . base64_encode($custom_id) . '/');
     }
 
 
-    public function findCustomerByEmail($email){
+    public function findCustomerByEmail($email)
+    {
 
-        return $this->sendGetEvent('users/search/?email='.$email); 
+        return $this->sendGetEvent('users/search/?email=' . $email);
     }
 
-    public function createCustomer($data){
+    public function createCustomer($data)
+    {
 
         return $this->sendPostEvent("users/", $data);
     }
 
-    public function updateOrCreateCustomer($data){
+    public function updateOrCreateCustomer($data)
+    {
 
         return $this->sendPostEvent("users/update_or_create/", $data);
     }
 
-    public function updateCustomer($id,$data){
+    public function updateCustomer($id, $data)
+    {
 
         return $this->sendPutEvent("users/$id/", $data);
     }
-    public function getProductByCustomId($custom_id){
+    public function getProductByCustomId($custom_id)
+    {
 
         return $this->sendGetEvent("products-by-id/$custom_id/details/");
     }
 
-    public function createProduct($data){
+    public function createProduct($data)
+    {
 
-        return $this->sendPostEvent("products/",$data);
+        return $this->sendPostEvent("products/", $data);
     }
 
-    public function createProductEvent($id,$data){
+    public function createProductEvent($id, $data)
+    {
 
         return $this->sendPostEvent("products/$id/product_event/", $data);
     }
 
-    public function findCustomerByUserKey($userKey){
+    public function findCustomerByUserKey($userKey)
+    {
 
         return $this->sendGetEvent("users/search/?key=$userKey");
     }
 
-    public function getFrontUserKey(){
+    public function getFrontUserKey()
+    {
 
         return $this->cookieManager->getCookie(self::COOKIE_USERKEY);
     }
 
-    public function createEvent($data){
+    public function createEvent($data)
+    {
 
-        if($this->helper->sendStoreSource()) 
-          $data["data"]["store_source"] =(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]/";
+        if ($this->helper->sendStoreSource())
+            $data["data"]["store_source"] = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]/";
 
         return $this->sendPostEvent("events/", $data);
     }
 
-    public function createCompany($data){
+    public function createCompany($data)
+    {
 
         return $this->sendPostEvent("companies/", $data);
     }
-    
-    public function deleteCompany($id){
+
+    public function deleteCompany($id)
+    {
 
         return $this->sendDeleteEvent("companies/$id");
     }
 
-    public function companyRemoveMember($id, $data){
+    public function companyRemoveMember($id, $data)
+    {
 
         $this->sendPostEvent("companies/$id/remove_member/", $data);
     }
 
-    public function companyAddMember($id, $data){
+    public function companyAddMember($id, $data)
+    {
 
         $this->sendPostEvent("companies/$id/add_member/", $data);
     }
-    public function getUsercomCustomerId($customerId = null, $searchWithUserKey = true){
+    public function getUsercomCustomerId($customerId = null, $searchWithUserKey = true)
+    {
 
         //if not customerId but login
-        if($customerId == null && $this->customerSession->isLoggedIn()) {
+        if ($customerId == null && $this->customerSession->isLoggedIn()) {
             $customerId = $this->customerSession->getCustomer()->getId();
         }
-        
-        //if customer exist in user.com 
-        if( ($customerId && ($usercomCustomer = $this->getCustomerByCustomId($customerId)) && isset($usercomCustomer->id)) || 
-            ($usercomCustomer = $this->findCustomerByUserKey($this->getFrontUserKey())) && isset($usercomCustomer->id) && $searchWithUserKey )
+
+        //if customer exist in user.com
+        if (($customerId && ($usercomCustomer = $this->getCustomerByCustomId($customerId)) && isset($usercomCustomer->id)) ||
+            ($usercomCustomer = $this->findCustomerByUserKey($this->getFrontUserKey())) && isset($usercomCustomer->id) && $searchWithUserKey
+        )
             return $usercomCustomer->id;
 
         //else create customer
         else if ($customerId) {
-            $data = array_merge($this->getCustomerData($customerId),array("custom_id"=>base64_encode($customerId)));
+            $data = array_merge($this->getCustomerData($customerId), array("custom_id" => base64_encode($customerId)));
             //if customer created return customer id
-            return ( ($usercomCustomer = $this->createCustomer($data)) && isset($usercomCustomer->id) ) ? $usercomCustomer->id : false;
+            return (($usercomCustomer = $this->createCustomer($data)) && isset($usercomCustomer->id)) ? $usercomCustomer->id : false;
         } else
             return null;
     }
 
-    public function getUsercomProductId ($productId = null) {
+    public function getUsercomProductId($productId = null)
+    {
 
-        if(!$productId)
+        if (!$productId)
             return false;
 
-        if(($usercomProduct = $this->getProductByCustomId($productId)) && isset($usercomProduct->id))
+        if (($usercomProduct = $this->getProductByCustomId($productId)) && isset($usercomProduct->id))
             return $usercomProduct->id;
-        else {         
-            $productData = $this->getProductData($productId); 
-            return ( ($usercomProduct = $this->createProduct($productData)) && isset($usercomProduct->id) ) ? $usercomProduct->id : false;
+        else {
+            $productData = $this->getProductData($productId);
+            return (($usercomProduct = $this->createProduct($productData)) && isset($usercomProduct->id)) ? $usercomProduct->id : false;
         }
     }
 
-    public function getCustomerData($customerId = null){
+    public function getCustomerData($customerId = null)
+    {
 
         //if not customerId but login
-        if($customerId == null && $this->customerSession->isLoggedIn()) {
+        if ($customerId == null && $this->customerSession->isLoggedIn()) {
             $customerId = $this->customerSession->getCustomer()->getId();
         }
 
-        if(!$customerId)
+        if (!$customerId)
             return;
 
         $customer = $this->customer->load($customerId);
@@ -290,53 +315,55 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
 
-    public function getProductData($productId = null){
+    public function getProductData($productId = null)
+    {
 
-        if(!$productId)
+        if (!$productId)
             return;
 
         $product = $this->product->load($productId);
 
-        $categories = $product->getCategoryIds();
-        $connection = $this->resourceConnection;
-        $ccev = $connection->getTableName('catalog_category_entity_varchar');
-        $cce = $connection->getTableName('catalog_category_entity');
-        $ea = $connection->getTableName('eav_attribute');
-        $eet = $connection->getTableName('eav_entity_type');
-        $query = "SELECT GROUP_CONCAT(ccev.value SEPARATOR ', ') as 'categories'
-            FROM ".$ccev." ccev
-            JOIN ".$cce." cce
+        $data = array(
+            "custom_id" => $productId,
+            "name" => $product->getName(),
+            "price" => (float)$product->getFinalPrice(),
+            "product_url" => $product->getProductUrl(),
+            "image_url" => $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'catalog/product' . $product->getData('image')
+        );
+
+        if ($categories = $product->getCategoryIds()) {
+            $connection = $this->resourceConnection;
+            $ccev = $connection->getTableName('catalog_category_entity_varchar');
+            $cce = $connection->getTableName('catalog_category_entity');
+            $ea = $connection->getTableName('eav_attribute');
+            $eet = $connection->getTableName('eav_entity_type');
+            $query = "SELECT GROUP_CONCAT(ccev.value SEPARATOR ', ') as 'categories'
+            FROM " . $ccev . " ccev
+            JOIN " . $cce . " cce
             ON cce.entity_id = ccev.entity_id
             AND ccev.attribute_id =
             (
                 SELECT attribute_id
-                FROM ".$ea." ea
+                FROM " . $ea . " ea
                 WHERE attribute_code = 'name'
                 and entity_type_id =
                 (
                     SELECT entity_type_id
-                    FROM ".$eet." eet
+                    FROM " . $eet . " eet
                     WHERE entity_type_code = 'catalog_category'
                        )
-             ) and cce.entity_id in (".implode(",",$categories).")"; 
-        $result = $connection->getConnection()->fetchAll($query);
-        $categoryName = $result[0]['categories']; 
+             ) and cce.entity_id in (" . implode(",", $categories) . ")";
+            $result = $connection->getConnection()->fetchAll($query);
+            $data["category_name"] = $result[0]['categories'];
+        }
 
 
-        $data =  array(
-            "custom_id" => $productId,
-            "name" => $product->getName(),
-            "price" => (float)$product->getFinalPrice(),
-            "category_name" => $categoryName, 
-            "product_url" => $product->getProductUrl(),
-            "image_url" => $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'catalog/product' . $product->getData('image')
-        );
-        
+
         $attributes = $product->getAttributes();
-        foreach($attributes as $a){
+        foreach ($attributes as $a) {
             $value = $product->getData($a->getName());
-            if($value != null){
-                $value = ( gettype($value) == "object" || gettype($value) == "array" ) ? json_encode($value) : strval($value); 
+            if ($value != null) {
+                $value = (gettype($value) == "object" || gettype($value) == "array") ? json_encode($value) : strval($value);
                 $data[$a->getName()] = $value;
             }
         }
@@ -344,5 +371,4 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
 
         return $data;
     }
-
 }
