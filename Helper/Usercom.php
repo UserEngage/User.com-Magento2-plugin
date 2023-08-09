@@ -317,7 +317,6 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getProductData($productId = null)
     {
-
         if (!$productId)
             return;
 
@@ -337,10 +336,18 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
             $cce = $connection->getTableName('catalog_category_entity');
             $ea = $connection->getTableName('eav_attribute');
             $eet = $connection->getTableName('eav_entity_type');
+
+            $entityIdColumnExists = $connection->getConnection()->tableColumnExists($ccev, 'entity_id');
+            if($entityIdColumnExists === true){ 
+                $colName = 'entity_id';
+            } else {
+                $colName = 'row_id';        
+            }
+
             $query = "SELECT GROUP_CONCAT(ccev.value SEPARATOR ', ') as 'categories'
             FROM " . $ccev . " ccev
             JOIN " . $cce . " cce
-            ON cce.entity_id = ccev.entity_id
+            ON cce." . $colName . " = ccev." . $colName . "
             AND ccev.attribute_id =
             (
                 SELECT attribute_id
@@ -352,9 +359,10 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
                     FROM " . $eet . " eet
                     WHERE entity_type_code = 'catalog_category'
                        )
-             ) and cce.entity_id in (" . implode(",", $categories) . ")";
+             ) and cce." . $colName . " in (" . implode(",", $categories) . ")";
             $result = $connection->getConnection()->fetchAll($query);
             $data["category_name"] = $result[0]['categories'];
+            $logger->info("result_categories  - ".$result[0]['categories']);
         }
 
 
