@@ -338,10 +338,10 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
             $eet = $connection->getTableName('eav_entity_type');
 
             $entityIdColumnExists = $connection->getConnection()->tableColumnExists($ccev, 'entity_id');
-            if($entityIdColumnExists === true){ 
+            if($entityIdColumnExists === true){
                 $colName = 'entity_id';
             } else {
-                $colName = 'row_id';        
+                $colName = 'row_id';
             }
 
             $query = "SELECT GROUP_CONCAT(ccev.value SEPARATOR ', ') as 'categories'
@@ -361,8 +361,9 @@ class Usercom extends \Magento\Framework\App\Helper\AbstractHelper
                        )
              ) and cce." . $colName . " in (" . implode(",", $categories) . ")";
             $result = $connection->getConnection()->fetchAll($query);
-            $data["category_name"] = $result[0]['categories'];
-            $logger->info("result_categories  - ".$result[0]['categories']);
+            if (isset($result[0]['categories'])){
+                $data["category_name"] = $result[0]['categories'];
+            }
         }
 
 
