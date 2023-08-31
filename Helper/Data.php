@@ -33,25 +33,25 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             self::XML_PATH . $code, $storeId
         );
     }
-    
+
     public function isModuleEnabled(){
 
-        return $this->getConfigValue(self::XML_ENABLE);             
+        return $this->getConfigValue(self::XML_ENABLE);
     }
 
     public function getToken(){
 
-        return $this->getConfigValue(self::XML_TOKEN);             
-    }   
-    
+        return $this->getConfigValue(self::XML_TOKEN);
+    }
+
     public function getApi(){
 
-        return $this->getConfigValue(self::XML_API);             
+        return $this->getConfigValue(self::XML_API);
     }
 
     public function getSubdomain(){
 
-        return $this->getConfigValue(self::XML_SUBDOMAIN);             
+        return $this->getConfigValue(self::XML_SUBDOMAIN);
     }
 
     public function sendStoreSource(){

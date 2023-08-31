@@ -1,8 +1,8 @@
-<?php                                                         
+<?php
 
-namespace Usercom\Analytics\Observer\Catalog;                        
+namespace Usercom\Analytics\Observer\Catalog;
 
-class ControllerProductView implements \Magento\Framework\Event\ObserverInterface                                
+class ControllerProductView implements \Magento\Framework\Event\ObserverInterface
 {
 
     protected $helper;
@@ -22,9 +22,9 @@ class ControllerProductView implements \Magento\Framework\Event\ObserverInterfac
     public function execute(
         \Magento\Framework\Event\Observer $observer
     ) {
-    
+
         $productId = $observer->getEvent()->getRequest()->getParam('id');
-        
+
         if( !$this->helper->isModuleEnabled() || !($usercomCustomerId = $this->usercom->getUsercomCustomerId()) || !($usercomProductId = $this->usercom->getUsercomProductId($productId)) )
             return;
 

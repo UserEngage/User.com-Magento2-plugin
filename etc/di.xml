@@ -7,5 +7,4 @@
     <type name="Magento\Customer\Model\AccountManagement">
         <plugin name="usercom.analytics.get_semail_info" type="Usercom\Analytics\Plugin\Customer\Model\AccountManagement" sortOrder="1"/>
     </type>
-
 </config>

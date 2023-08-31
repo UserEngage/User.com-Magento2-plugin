@@ -6,25 +6,25 @@
     <event name="customer_login">
         <observer instance="Usercom\Analytics\Observer\Customer\Login" name="usercom_customer_login" />
     </event>
-    <event name="checkout_cart_add_product_complete"> 
-        <observer instance="Usercom\Analytics\Observer\Checkout\CartAddProductComplete" name="usercom_checkout_cart_add_product_complete"/> 
-    </event>
-    <event name="controller_action_predispatch_catalog_product_view"> 
-        <observer instance="Usercom\Analytics\Observer\Catalog\ControllerProductView" name="usercom_catalog_controller_product_view"/> 
-    </event>
-    <event name="controller_action_postdispatch_checkout_index_index"> 
-        <observer instance="Usercom\Analytics\Observer\Controller\ActionPostdispatchCheckoutIndexIndex" name="usercom_controller_action_postdispatch_checkout_index_index"/> 
-    </event>
-    <event name="sales_quote_remove_item"> 
-        <observer instance="Usercom\Analytics\Observer\Sales\QuoteRemoveItem" name="usercom_sales_quote_remove_item"/> 
-    </event>
-    <event name="sales_order_place_after"> 
-        <observer instance="Usercom\Analytics\Observer\Sales\OrderPlaceAfter" name="usercom_sales_order_place_after"/> 
-    </event>
-    <event name="newsletter_subscriber_save_after"> 
-        <observer instance="Usercom\Analytics\Observer\Newsletter\SubscriberSaveAfter" name="usercom_newsletter_subscriber_save_after"/> 
-    </event>
-    <event name="sales_order_payment_pay"> 
-        <observer instance="Usercom\Analytics\Observer\Sales\OrderPaymentPay" name="usercom_sales_order_payment_pay"/> 
-    </event>
+<!--    <event name="checkout_cart_add_product_complete"> -->
+<!--        <observer instance="Usercom\Analytics\Observer\Checkout\CartAddProductComplete" name="usercom_checkout_cart_add_product_complete"/> -->
+<!--    </event>-->
+<!--    <event name="controller_action_predispatch_catalog_product_view"> -->
+<!--        <observer instance="Usercom\Analytics\Observer\Catalog\ControllerProductView" name="usercom_catalog_controller_product_view"/> -->
+<!--    </event>-->
+<!--    <event name="controller_action_postdispatch_checkout_index_index"> -->
+<!--        <observer instance="Usercom\Analytics\Observer\Controller\ActionPostdispatchCheckoutIndexIndex" name="usercom_controller_action_postdispatch_checkout_index_index"/> -->
+<!--    </event>-->
+<!--    <event name="sales_quote_remove_item"> -->
+<!--        <observer instance="Usercom\Analytics\Observer\Sales\QuoteRemoveItem" name="usercom_sales_quote_remove_item"/> -->
+<!--    </event>-->
+<!--    <event name="sales_order_place_after"> -->
+<!--        <observer instance="Usercom\Analytics\Observer\Sales\OrderPlaceAfter" name="usercom_sales_order_place_after"/> -->
+<!--    </event>-->
+<!--    <event name="newsletter_subscriber_save_after"> -->
+<!--        <observer instance="Usercom\Analytics\Observer\Newsletter\SubscriberSaveAfter" name="usercom_newsletter_subscriber_save_after"/> -->
+<!--    </event>-->
+<!--    <event name="sales_order_payment_pay"> -->
+<!--        <observer instance="Usercom\Analytics\Observer\Sales\OrderPaymentPay" name="usercom_sales_order_payment_pay"/> -->
+<!--    </event>-->
 </config>
