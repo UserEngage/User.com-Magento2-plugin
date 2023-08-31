@@ -1,25 +1,28 @@
-<?php if($block->isModuleEnabled()):?>
-<script data-cfasync="false" type="text/javascript">
-window.civchat = {
-setCookie(cname, cvalue, exdays) {
-  const d = new Date();
-  d.setTime(d.getTime() + (exdays*24*60*60*1000));
-  let expires = "expires="+ d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-},
-userKeyValue: '',
-get userKey(){
-    return this.userKeyValue;
-},
-set userKey(value){
-    this.userKeyValue = value;
-    this.setCookie("<?=\Usercom\Analytics\Helper\Usercom::COOKIE_USERKEY?>", this.userKeyValue, 1000);
-},
-apiKey: '<?= $block->getApi() ?>'
-<?php if ($id = $block->getCustomerId()): ?>
-,user_id: '<?= base64_encode($id) ?>'
-<?php endif ?>
-};
-</script>
-<script data-cfasync="false" type="text/javascript" src="https://<?= $block->getSubdomain() ?>/widget.js"></script>
-<?php endif ?>
+<?php
+
+if ($block->isModuleEnabled()): ?>
+    <script data-cfasync="false" type="text/javascript">
+        window.civchat = {
+            setCookie(cname, cvalue, exdays) {
+                const d = new Date();
+                d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+                let expires = "expires=" + d.toUTCString();
+                document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+            },
+            userKeyValue: '',
+            get userKey() {
+                return this.userKeyValue;
+            },
+            set userKey(value) {
+                this.userKeyValue = value;
+                this.setCookie("<?=\Usercom\Analytics\Helper\Usercom::COOKIE_USERKEY?>", this.userKeyValue, 1000);
+            },
+            apiKey: '<?= $block->getApi() ?>'
+            <?php if ($id = $block->getUsercomUserId()): ?>
+            ,user_id: '<?= $id ?>'
+            <?php endif ?>
+        };
+    </script>
+    <script data-cfasync="false" type="text/javascript" src="https://<?= $block->getSubdomain() ?>/widget.js"></script>
+<?php
+endif ?>

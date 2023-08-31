@@ -8,7 +8,7 @@ class SyncOrder extends \Magento\Backend\App\Action{
     protected $resultJsonFactory;
     protected $syncTimeArray;
     protected $orderCollectionFactory;
-    protected $usercom;  
+    protected $usercom;
     protected $addressConfig;
 
     public function __construct(
@@ -35,7 +35,7 @@ class SyncOrder extends \Magento\Backend\App\Action{
             !(gettype($key = array_search($time,array_column($this->syncTimeArray, 'value'))) == "integer") ||
             !(array_search($time,array_column($this->syncTimeArray, 'value')) >= 0) ||
             !(array_search($time,array_column($this->syncTimeArray, 'value')) <= count($this->syncTimeArray))
-        ) 
+        )
         return $this->result("Error: bad time", 400);
 
 
@@ -52,15 +52,15 @@ class SyncOrder extends \Magento\Backend\App\Action{
         foreach($orders as $order){
             $customerId = $order->getCustomerId();
             if(!($usercomCustomerId = $this->usercom->getUsercomCustomerId($customerId, false))){
-                $errorMessage .= "Can't create user from order by id: ". $order->getId()."<br>";
+                $errorMessage .= "Can't create user from order ". $order->getId()." by id: ".$customerId."<br>";
                 continue;
             }
 
             $orderData = $order->getData();
-            unset($orderData["addresses"]); 
+            unset($orderData["addresses"]);
             unset($orderData["status_histories"]);
             unset($orderData["payment"]);
-            unset($orderData["extension_attributes"]); 
+            unset($orderData["extension_attributes"]);
 
             $orderData["shipping_address"] = $this->addressConfig->getFormatByCode(\Magento\Customer\Model\Address\Config::DEFAULT_ADDRESS_FORMAT)->getRenderer()->renderArray($order->getShippingAddress());
             $orderData["billing_address"] = $this->addressConfig->getFormatByCode(\Magento\Customer\Model\Address\Config::DEFAULT_ADDRESS_FORMAT)->getRenderer()->renderArray($order->getBillingAddress());
@@ -69,7 +69,7 @@ class SyncOrder extends \Magento\Backend\App\Action{
             $orderData["items"] = "";
             foreach ($order->getAllItems() as $item)
                 $orderData["items"] .= $item->getName().",";
-            $orderData["items"] = trim($orderData["items"],","); 
+            $orderData["items"] = trim($orderData["items"],",");
 
 
             $data = array(
@@ -86,7 +86,7 @@ class SyncOrder extends \Magento\Backend\App\Action{
         }
 
 
-        return ($errorMessage) ? $this->result($errorMessage,409) : $this->result("Success", 200); 
+        return ($errorMessage) ? $this->result($errorMessage,409) : $this->result("Success", 200);
 
     }
 
